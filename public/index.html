@@ -284,6 +284,7 @@
   .stuckBox p { font-size: 15px; opacity: 0.9; }
   .stuckBox button { margin-top: 4px; }
   .stuckBox button.secondary { background: transparent; color: #ff8787; border: 1px solid #ff8787; }
+  button.secondary { background: transparent; color: #ff8787; border: 1px solid #ff8787; }
   #stuckError, #soloError, #authError, #friendsError { color: #ff8787; font-size: 13px; min-height: 16px; }
   #adContainer {
     width: 100%; max-width: 300px; height: 210px; margin: 0 auto;
@@ -509,6 +510,7 @@
   <div id="overlayTitle"></div>
   <div id="overlayInfo"></div>
   <button id="againBtn">Play Again</button>
+  <button id="matchMenuBtn" class="secondary">Back to Menu</button>
 </div>
 
 <div id="oppBanner"></div>
@@ -924,6 +926,11 @@ $('soloBtn').onclick = () => {
   ws.send(JSON.stringify({ t: 'soloStart' }));
 };
 $('againBtn').onclick = () => { $('overlay').classList.remove('active'); join(); };
+$('matchMenuBtn').onclick = () => {
+  $('overlay').classList.remove('active');
+  document.body.classList.remove('mode-solo');
+  show('menu');
+};
 $('continueCoinBtn').onclick = () => ws.send(JSON.stringify({ t: 'continueCoin' }));
 $('continueAdBtn').onclick = () => ws.send(JSON.stringify({ t: 'watchAd' }));
 $('giveUpBtn').onclick = () => ws.send(JSON.stringify({ t: 'giveUp' }));
