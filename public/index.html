@@ -68,6 +68,9 @@
   .modeBtnSolo { background: linear-gradient(135deg, #4dc3ff, #7a6bff); color: #fff; }
   .modeBtnMulti { background: linear-gradient(135deg, #ffb63b, #ff6bd6); color: #4a2c00; }
 
+  .legalRow { display: flex; gap: 8px; opacity: 0.55; font-size: 12px; margin-top: 4px; }
+  .legalRow a { color: #fff; text-decoration: underline; }
+
   .dailyBtn {
     width: 100%; background: linear-gradient(90deg, #ffd76b, #ff8a65); color: #4a2c00;
     display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px;
@@ -394,6 +397,14 @@
       <span class="modeSub">Online, gerçek zamanlı eşleş</span>
     </button>
   </div>
+
+  <div class="legalRow">
+    <a href="#" id="privacyLink">Gizlilik Politikası</a>
+    <span>·</span>
+    <a href="#" id="termsLink">Kullanım Şartları</a>
+    <span>·</span>
+    <a href="#" id="contactLink">İletişim</a>
+  </div>
 </div>
 
 <div id="friendsOverlay" class="screen-overlay">
@@ -583,6 +594,14 @@ function backendWsUrl() {
     return NATIVE_BACKEND_WS_URL;
   }
   return (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host;
+}
+// Yasal sayfalar (gizlilik/şartlar/iletişim): native pakette sayfa yerel dosyadan açıldığı
+// için mutlak production adresi gerekir; web'de aynı sunucudan servis edildiği için göreli yol yeterli.
+function legalUrl(path) {
+  if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+    return 'https://duo-online.onrender.com' + path;
+  }
+  return path;
 }
 
 const N = 8;
@@ -1024,6 +1043,10 @@ $('spinWheelBtn').onclick = () => {
   setTimeout(() => { $('spinWheelBtn').disabled = false; }, 3500);
 };
 $('dailyAdBtn').onclick = () => ws.send(JSON.stringify({ t: 'watchDailyAd' }));
+
+$('privacyLink').onclick = (e) => { e.preventDefault(); window.open(legalUrl('/privacy.html'), '_blank'); };
+$('termsLink').onclick = (e) => { e.preventDefault(); window.open(legalUrl('/terms.html'), '_blank'); };
+$('contactLink').onclick = (e) => { e.preventDefault(); window.open(legalUrl('/contact.html'), '_blank'); };
 
 $('loginRewardCloseBtn').onclick = () => $('loginRewardOverlay').classList.remove('active');
 $('loginRewardAdBtn').onclick = () => ws.send(JSON.stringify({ t: 'watchLoginAd' }));
