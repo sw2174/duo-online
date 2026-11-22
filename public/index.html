@@ -577,10 +577,7 @@
 // Web'de sayfa zaten sunucudan servis edildiği için konum (location.host) sunucunun
 // adresiyle aynıdır. Capacitor (mobil) paketinde ise sayfa yerel dosyadan açılır,
 // location.host sunucuyu göstermez — bu yüzden mobil pakette sabit bir adrese ihtiyaç var.
-// Gerçek domain hazır olunca SADECE bu satırı güncelle (ör. 'wss://api.blokyarisi.com').
-// DEMO DEĞERİ: Android emulator'den host makinenin localhost'una özel takma ad (10.0.2.2).
-// Gerçek yayında bunu kendi backend domaininle (ör. 'wss://api.blokyarisi.com') değiştir.
-const NATIVE_BACKEND_WS_URL = 'ws://10.0.2.2:3131';
+const NATIVE_BACKEND_WS_URL = 'wss://duo-online.onrender.com';
 function backendWsUrl() {
   if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
     return NATIVE_BACKEND_WS_URL;

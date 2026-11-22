@@ -10,3 +10,6 @@ android/app/src/main/assets/capacitor.config.json
 ios/
 *.log
 .DS_Store
+android/*.keystore
+android/keystore.properties
+android/RELEASE_KEYSTORE_BILGILERI.txt
