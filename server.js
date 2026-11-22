@@ -74,16 +74,16 @@ const LOGIN_REWARD_WEEKLY_INTERVAL = 7;
 // Kozmetik mağaza kataloğu: id -> {name, price, cat}. cat aynı kategori içindeki
 // ürünlerin birbirini dışladığı (tek seferde tek ekipli) grubu belirler.
 const COSMETICS = {
-  skin_neon: { name: 'Neon Blok', price: 200, cat: 'skin' },
-  skin_gold: { name: 'Altın Blok', price: 400, cat: 'skin' },
-  skin_ice: { name: 'Buz Blok', price: 350, cat: 'skin' },
-  skin_galaxy: { name: 'Galaksi Blok', price: 600, cat: 'skin' },
-  skin_fire: { name: 'Ateş Blok', price: 500, cat: 'skin' },
-  skin_legend: { name: 'Efsanevi Blok', price: 1000, cat: 'skin' },
-  frame_classic: { name: 'Profil Çerçevesi', price: 150, cat: 'frame' },
-  victory_classic: { name: 'Zafer Animasyonu', price: 300, cat: 'victory' },
-  theme_classic: { name: 'Tahta Teması', price: 450, cat: 'theme' },
-  emoji_classic: { name: 'Emoji Paketi', price: 200, cat: 'emoji' },
+  skin_neon: { name: 'Neon Block', price: 200, cat: 'skin' },
+  skin_gold: { name: 'Gold Block', price: 400, cat: 'skin' },
+  skin_ice: { name: 'Ice Block', price: 350, cat: 'skin' },
+  skin_galaxy: { name: 'Galaxy Block', price: 600, cat: 'skin' },
+  skin_fire: { name: 'Fire Block', price: 500, cat: 'skin' },
+  skin_legend: { name: 'Legendary Block', price: 1000, cat: 'skin' },
+  frame_classic: { name: 'Profile Frame', price: 150, cat: 'frame' },
+  victory_classic: { name: 'Victory Animation', price: 300, cat: 'victory' },
+  theme_classic: { name: 'Board Theme', price: 450, cat: 'theme' },
+  emoji_classic: { name: 'Emoji Pack', price: 200, cat: 'emoji' },
 };
 
 // --- kalıcı oyuncu profilleri (coin, rekor, envanter) + hesaplar — basit dosya tabanlı "db" ---
@@ -534,7 +534,7 @@ wss.on('connection', (ws) => {
     } else if (msg.t === 'buyCoins') {
       // Stripe anahtarı yoksa test modu: tıklayınca anında coin eklenir, gerçek
       // ödeme alınmaz. Anahtar varsa gerçek akış 'createCheckout' üzerinden işler.
-      if (stripe) { send(ws, { t: 'checkoutError', message: 'Gerçek ödeme aktif — mağazayı yeniden aç.' }); return; }
+      if (stripe) { send(ws, { t: 'checkoutError', message: 'Real payments are active — reopen the store.' }); return; }
       const pkg = COIN_PACKAGES[msg.package];
       if (!pkg) return;
       setCoins(ws, (ws.coins || 0) + pkg.coins);
@@ -544,9 +544,11 @@ wss.on('connection', (ws) => {
     } else if (msg.t === 'createCheckout') {
       const pkg = COIN_PACKAGES[msg.package];
       if (!pkg) return;
-      if (!stripe) { send(ws, { t: 'checkoutError', message: 'Ödeme sistemi yapılandırılmamış.' }); return; }
-      if (!ws.pid) { send(ws, { t: 'checkoutError', message: 'Profil yüklenmedi, sayfayı yenile.' }); return; }
-      const baseUrl = `http://localhost:${PORT}`;
+      if (!stripe) { send(ws, { t: 'checkoutError', message: 'Payment system is not configured.' }); return; }
+      if (!ws.pid) { send(ws, { t: 'checkoutError', message: 'Profile not loaded, please refresh the page.' }); return; }
+      // PUBLIC_URL, Render gibi platformlarda gerçek yayın adresine (ör. https://duo-online.onrender.com)
+      // ayarlanmalı; yoksa yerel geliştirme için localhost'a düşer.
+      const baseUrl = process.env.PUBLIC_URL || `http://localhost:${PORT}`;
       stripe.checkout.sessions.create({
         mode: 'payment',
         // payment_method_types artık burada belirtilmiyor — Stripe Dashboard'daki
@@ -566,21 +568,21 @@ wss.on('connection', (ws) => {
         send(ws, { t: 'checkoutUrl', url: session.url });
       }).catch(err => {
         console.error('Stripe checkout oluşturulamadı', err.message);
-        send(ws, { t: 'checkoutError', message: 'Ödeme başlatılamadı: ' + err.message });
+        send(ws, { t: 'checkoutError', message: 'Payment could not be started: ' + err.message });
       });
 
     } else if (msg.t === 'confirmPurchase') {
       const sessionId = String(msg.sessionId || '');
       if (!stripe || !sessionId) return;
-      if (processedSessions[sessionId]) { send(ws, { t: 'checkoutError', message: 'Bu ödeme zaten işlendi.' }); return; }
+      if (processedSessions[sessionId]) { send(ws, { t: 'checkoutError', message: 'This payment has already been processed.' }); return; }
       stripe.checkout.sessions.retrieve(sessionId).then(session => {
         if (session.payment_status !== 'paid') {
-          send(ws, { t: 'checkoutError', message: 'Ödeme tamamlanmadı.' });
+          send(ws, { t: 'checkoutError', message: 'Payment was not completed.' });
           return;
         }
         const pkg = COIN_PACKAGES[session.metadata && session.metadata.package];
         const targetPid = session.metadata && session.metadata.pid;
-        if (!pkg || !targetPid) { send(ws, { t: 'checkoutError', message: 'Sipariş bilgisi okunamadı.' }); return; }
+        if (!pkg || !targetPid) { send(ws, { t: 'checkoutError', message: 'Order information could not be read.' }); return; }
         processedSessions[sessionId] = true;
         const profile = getProfile(targetPid);
         profile.coins += pkg.coins; // gerçek miktar her zaman COIN_PACKAGES'tan okunur
@@ -589,11 +591,11 @@ wss.on('connection', (ws) => {
           ws.coins = profile.coins;
           send(ws, { t: 'coinsUpdated', coins: ws.coins, added: pkg.coins, real: true });
         } else {
-          send(ws, { t: 'checkoutError', message: 'Ödeme başka bir profile ait.' });
+          send(ws, { t: 'checkoutError', message: 'This payment belongs to a different profile.' });
         }
       }).catch(err => {
         console.error('Stripe session doğrulanamadı', err.message);
-        send(ws, { t: 'checkoutError', message: 'Ödeme doğrulanamadı: ' + err.message });
+        send(ws, { t: 'checkoutError', message: 'Payment could not be verified: ' + err.message });
       });
 
     } else if (msg.t === 'buyCosmetic') {

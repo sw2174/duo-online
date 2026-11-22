@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -346,7 +346,7 @@
   }
   .pkgBtn.best { border-color: rgba(255,107,214,0.5); box-shadow: 0 0 0 1px rgba(255,107,214,0.25); }
   .pkgBtn.best::after {
-    content: 'En avantajlı'; position: absolute; top: -9px; right: 10px;
+    content: 'Best Value'; position: absolute; top: -9px; right: 10px;
     background: #ff6bd6; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 8px;
   }
   .pkgBtn.equipped { background: rgba(127,232,160,0.18); border-color: #7fe8a0; }
@@ -367,128 +367,128 @@
   <div class="menuHeader">
     <div class="menuLogo">🧩</div>
     <h1>Blok Yarışı</h1>
-    <p class="hint">Rakibinle aynı taşları alırsın.<br>Kim daha çok puan yaparsa o kazanır!</p>
+    <p class="hint">You get the same pieces as your opponent.<br>Whoever scores more wins!</p>
   </div>
 
   <div class="profileCard">
-    <input id="nameInput" maxlength="20" placeholder="Adın">
+    <input id="nameInput" maxlength="20" placeholder="Your name">
     <div class="profileStats">
-      <span id="menuHighScore">🏆 Rekor: 0</span>
-      <span id="accountStatus">👤 Misafir</span>
+      <span id="menuHighScore">🏆 Best: 0</span>
+      <span id="accountStatus">👤 Guest</span>
     </div>
     <div class="utilityRow">
-      <button id="openAuthBtn" class="utilityBtn">🔐 Giriş / Kayıt</button>
-      <button id="openFriendsBtn" class="utilityBtn">👥 Arkadaşlar</button>
+      <button id="openAuthBtn" class="utilityBtn">🔐 Log In / Sign Up</button>
+      <button id="openFriendsBtn" class="utilityBtn">👥 Friends</button>
     </div>
   </div>
 
-  <button id="openDailyBtn" class="dailyBtn">🎡 Bonus Çark<span class="dailyDot" id="dailyDot"></span></button>
-  <button id="inviteFriendBtn" class="inviteBtn">📨 Arkadaşını Davet Et<span class="inviteBadge">+100 Coin</span></button>
+  <button id="openDailyBtn" class="dailyBtn">🎡 Bonus Wheel<span class="dailyDot" id="dailyDot"></span></button>
+  <button id="inviteFriendBtn" class="inviteBtn">📨 Invite a Friend<span class="inviteBadge">+100 Coin</span></button>
 
   <div class="modeGrid">
     <button id="soloBtn" class="modeBtn modeBtnSolo">
       <span class="modeIcon">🧍</span>
-      <span class="modeTitle">Tek Kişilik</span>
-      <span class="modeSub">Sınırsız oyna, rekorunu kır</span>
+      <span class="modeTitle">Solo</span>
+      <span class="modeSub">Play endless, beat your best</span>
     </button>
     <button id="multiBtn" class="modeBtn modeBtnMulti">
       <span class="modeIcon">⚔️</span>
-      <span class="modeTitle">Rakip Bul</span>
-      <span class="modeSub">Online, gerçek zamanlı eşleş</span>
+      <span class="modeTitle">Find Opponent</span>
+      <span class="modeSub">Online, real-time matchmaking</span>
     </button>
   </div>
 
   <div class="legalRow">
-    <a href="#" id="privacyLink">Gizlilik Politikası</a>
+    <a href="#" id="privacyLink">Privacy Policy</a>
     <span>·</span>
-    <a href="#" id="termsLink">Kullanım Şartları</a>
+    <a href="#" id="termsLink">Terms of Service</a>
     <span>·</span>
-    <a href="#" id="contactLink">İletişim</a>
+    <a href="#" id="contactLink">Contact</a>
   </div>
 </div>
 
 <div id="friendsOverlay" class="screen-overlay">
   <div class="stuckBox storeBox">
-    <h2>👥 Arkadaşlar</h2>
+    <h2>👥 Friends</h2>
     <div id="inviteBox" style="display:none;">
-      <p class="hint">📨 Arkadaşını davet kodunla davet et, üye olunca <b>+100 Coin</b> kazan!</p>
+      <p class="hint">📨 Invite a friend with your invite code, earn <b>+100 Coin</b> when they sign up!</p>
       <div style="display:flex; gap:8px;">
         <input id="myInviteCode" readonly style="flex:1; width:auto;">
-        <button id="copyInviteBtn" style="padding:10px 16px;">Kopyala</button>
+        <button id="copyInviteBtn" style="padding:10px 16px;">Copy</button>
       </div>
     </div>
-    <p id="inviteGuestHint" class="hint" style="display:none;">Kendi davet kodunu almak için önce üye ol.</p>
+    <p id="inviteGuestHint" class="hint" style="display:none;">Sign up first to get your own invite code.</p>
     <div style="display:flex; gap:8px;">
-      <input id="friendUserInput" maxlength="20" placeholder="Kullanıcı adı" style="flex:1; width:auto;">
-      <button id="addFriendBtn" style="padding:10px 16px;">Ekle</button>
+      <input id="friendUserInput" maxlength="20" placeholder="Username" style="flex:1; width:auto;">
+      <button id="addFriendBtn" style="padding:10px 16px;">Add</button>
     </div>
     <p id="friendsError"></p>
     <div id="friendRequestsList"></div>
     <div id="friendsList"></div>
-    <button id="closeFriendsBtn" class="secondary">Kapat</button>
+    <button id="closeFriendsBtn" class="secondary">Close</button>
   </div>
 </div>
 
 <div id="challengeOverlay" class="screen-overlay">
   <div class="stuckBox">
-    <h2>⚔️ Meydan Okuma!</h2>
+    <h2>⚔️ Challenge!</h2>
     <p id="challengeFromText"></p>
-    <button id="acceptChallengeBtn">Kabul Et</button>
-    <button id="declineChallengeBtn" class="secondary">Reddet</button>
+    <button id="acceptChallengeBtn">Accept</button>
+    <button id="declineChallengeBtn" class="secondary">Decline</button>
   </div>
 </div>
 
 <div id="dailyOverlay" class="screen-overlay">
   <div class="stuckBox">
-    <h2>🎡 Bonus Çark</h2>
-    <p id="dailyStreakText">Seri: 1. gün</p>
+    <h2>🎡 Bonus Wheel</h2>
+    <p id="dailyStreakText">Streak: Day 1</p>
     <div class="wheelWrap">
       <div class="wheelPointer"></div>
       <div class="wheel" id="wheelEl"></div>
     </div>
     <p id="dailyResultText"></p>
-    <button id="spinWheelBtn">Çarkı Çevir</button>
-    <button id="dailyAdBtn" style="display:none;">🎬 Reklamla x2 Yap</button>
-    <button id="dailyCloseBtn" class="secondary">Kapat</button>
+    <button id="spinWheelBtn">Spin the Wheel</button>
+    <button id="dailyAdBtn" style="display:none;">🎬 Watch Ad to x2</button>
+    <button id="dailyCloseBtn" class="secondary">Close</button>
   </div>
 </div>
 
 <div id="loginRewardOverlay" class="screen-overlay">
   <div class="stuckBox">
-    <h2>🎁 Günlük Ödül</h2>
+    <h2>🎁 Daily Reward</h2>
     <p id="loginRewardAmountText" style="font-size:19px; font-weight:800;"></p>
     <p id="loginRewardWeeklyText" style="display:none; color:#ffd24d; font-weight:700;"></p>
     <p id="loginRewardStreakText" style="opacity:0.85;"></p>
-    <button id="loginRewardAdBtn" style="display:none;">🎬 Reklam İzle (+40 Coin)</button>
-    <button id="loginRewardCloseBtn">Tamam</button>
+    <button id="loginRewardAdBtn" style="display:none;">🎬 Watch Ad (+40 Coin)</button>
+    <button id="loginRewardCloseBtn">OK</button>
   </div>
 </div>
 
 <div id="authOverlay" class="screen-overlay">
   <div class="stuckBox">
-    <h2>🔐 Hesap</h2>
-    <p class="hint">Kayıt olursan mevcut Coin/rekor/kozmetiklerin hesabına bağlanır ve başka bir cihazdan girince de seni bekler.</p>
-    <input id="authUser" maxlength="20" placeholder="Kullanıcı adı (3-20, harf/rakam/_)">
-    <input id="authPass" type="password" maxlength="40" placeholder="Şifre (en az 4 karakter)">
-    <input id="authRefCode" maxlength="20" placeholder="Davet kodu (opsiyonel)">
+    <h2>🔐 Account</h2>
+    <p class="hint">Signing up links your current Coins/best score/cosmetics to your account, so they'll be waiting for you on any device.</p>
+    <input id="authUser" maxlength="20" placeholder="Username (3-20, letters/numbers/_)">
+    <input id="authPass" type="password" maxlength="40" placeholder="Password (min 4 characters)">
+    <input id="authRefCode" maxlength="20" placeholder="Invite code (optional)">
     <p id="authError"></p>
-    <button id="authLoginBtn">Giriş Yap</button>
-    <button id="authRegisterBtn">Kayıt Ol</button>
-    <button id="authCloseBtn" class="secondary">Misafir olarak oyna</button>
+    <button id="authLoginBtn">Log In</button>
+    <button id="authRegisterBtn">Sign Up</button>
+    <button id="authCloseBtn" class="secondary">Play as Guest</button>
   </div>
 </div>
 
 <div id="waiting" class="screen">
   <h1>🔎</h1>
-  <p>Rakip aranıyor...</p>
-  <p class="hint">Bir arkadaşın da bu sayfayı açarsa eşleşirsiniz.</p>
+  <p>Looking for an opponent...</p>
+  <p class="hint">If a friend opens this page too, you'll be matched.</p>
 </div>
 
 <div id="game" class="screen">
   <div id="topbar">
-    <div class="scorebox"><div class="name" id="myName">Sen</div><div class="pts" id="myScore">0</div></div>
+    <div class="scorebox"><div class="name" id="myName">You</div><div class="pts" id="myScore">0</div></div>
     <div id="oppMini"></div>
-    <div class="scorebox"><div class="name" id="oppName">Rakip</div><div class="pts" id="oppScore">0</div><div id="oppStreak"></div></div>
+    <div class="scorebox"><div class="name" id="oppName">Opponent</div><div class="pts" id="oppScore">0</div><div id="oppStreak"></div></div>
   </div>
   <div id="moveTimerBadge"></div>
   <div id="board"></div>
@@ -499,7 +499,7 @@
   <div id="confetti"></div>
   <div id="overlayTitle"></div>
   <div id="overlayInfo"></div>
-  <button id="againBtn">Tekrar Oyna</button>
+  <button id="againBtn">Play Again</button>
 </div>
 
 <div id="oppBanner"></div>
@@ -507,32 +507,32 @@
 
 <div id="stuckOverlay" class="screen-overlay">
   <div class="stuckBox">
-    <h2>Hamlen kalmadı!</h2>
-    <p>Puanın: <span id="stuckScore">0</span></p>
+    <h2>No moves left!</h2>
+    <p>Your score: <span id="stuckScore">0</span></p>
     <p>Blok Coin: <span id="stuckCoins">0</span> 🪙</p>
-    <p id="stuckTimerLine">⏱ Kalan süre: <span id="stuckTimer">30s</span></p>
-    <button id="continueCoinBtn">100 Blok Coin ile devam et</button>
-    <button id="continueAdBtn">🎬 Reklam izleyerek devam et</button>
-    <button id="giveUpBtn" class="secondary">Pes et</button>
+    <p id="stuckTimerLine">⏱ Time left: <span id="stuckTimer">30s</span></p>
+    <button id="continueCoinBtn">Continue with 100 Blok Coin</button>
+    <button id="continueAdBtn">🎬 Watch an ad to continue</button>
+    <button id="giveUpBtn" class="secondary">Give Up</button>
     <p id="stuckError"></p>
   </div>
 </div>
 
 <div id="soloOverlay" class="screen-overlay">
   <div class="stuckBox">
-    <h2 id="soloTitle">OYUN BİTTİ!</h2>
-    <p>Mevcut Skor: <span id="soloScore">0</span></p>
-    <p>Rekor: <span id="soloHigh">0</span></p>
+    <h2 id="soloTitle">GAME OVER!</h2>
+    <p>Current Score: <span id="soloScore">0</span></p>
+    <p>Best: <span id="soloHigh">0</span></p>
     <div id="soloChoices">
-      <button id="soloAdBonusBtn">🎬 Reklam İzle → Skorunu <span id="soloBonusPreview">0</span> Yap (x1,5)</button>
-      <button id="soloAdContinueBtn">❤️ Reklam İzle → Oyuna Devam Et</button>
-      <button id="soloCoinContinueBtn">🪙 100 Coin → Oyuna Devam Et</button>
-      <button id="soloEndBtn" class="secondary">Oyunu Bitir</button>
+      <button id="soloAdBonusBtn">🎬 Watch Ad → Boost Score to <span id="soloBonusPreview">0</span> (x1.5)</button>
+      <button id="soloAdContinueBtn">❤️ Watch Ad → Continue Playing</button>
+      <button id="soloCoinContinueBtn">🪙 100 Coin → Continue Playing</button>
+      <button id="soloEndBtn" class="secondary">End Game</button>
     </div>
     <div id="soloResolved" style="display:none">
       <p id="soloResolvedMsg"></p>
-      <button id="soloAgainBtn">Tekrar Oyna</button>
-      <button id="soloMenuBtn" class="secondary">Ana Menüye Dön</button>
+      <button id="soloAgainBtn">Play Again</button>
+      <button id="soloMenuBtn" class="secondary">Back to Menu</button>
     </div>
     <p id="soloError"></p>
   </div>
@@ -540,12 +540,12 @@
 
 <div id="adOverlay" class="screen-overlay">
   <div class="stuckBox">
-    <h2>🎬 Reklam</h2>
-    <p id="adStatusText">Reklamı izlemek için başlat.</p>
+    <h2>🎬 Ad</h2>
+    <p id="adStatusText">Tap start to watch the ad.</p>
     <div id="adContainer"></div>
     <video id="adContentVideo" style="display:none;" playsinline></video>
-    <button id="adStartBtn">▶️ Reklamı Başlat</button>
-    <button id="adCancelBtn" class="secondary">Vazgeç</button>
+    <button id="adStartBtn">▶️ Start Ad</button>
+    <button id="adCancelBtn" class="secondary">Cancel</button>
   </div>
 </div>
 
@@ -554,26 +554,26 @@
 <div id="storeOverlay" class="screen-overlay">
   <div class="stuckBox storeBox">
     <div class="storeHeader">
-      <h2>Mağaza</h2>
+      <h2>Store</h2>
       <div class="storeWallet">🪙 <span id="storeCoins">0</span></div>
     </div>
     <div class="storeTabs">
-      <button id="storeTabCoinsBtn" class="tabBtn activeTab">Coin Paketleri</button>
-      <button id="storeTabCosmeticsBtn" class="tabBtn">Kozmetikler</button>
+      <button id="storeTabCoinsBtn" class="tabBtn activeTab">Coin Packages</button>
+      <button id="storeTabCosmeticsBtn" class="tabBtn">Cosmetics</button>
     </div>
     <div id="storePanelCoins">
-      <p class="storeNote">Test modu — gerçek ödeme alınmaz, bakiyeye anında eklenir.</p>
-      <button class="pkgBtn" data-pkg="p100"><span class="pkgIcon">🪙</span><span class="pkgInfo"><span class="pkgAmount">100 Blok Coin</span><span class="pkgPrice">0,50 € (test)</span></span></button>
-      <button class="pkgBtn" data-pkg="p250"><span class="pkgIcon">👛</span><span class="pkgInfo"><span class="pkgAmount">250 Blok Coin</span><span class="pkgPrice">0,99 € (test)</span></span></button>
-      <button class="pkgBtn" data-pkg="p600"><span class="pkgIcon">💰</span><span class="pkgInfo"><span class="pkgAmount">600 Blok Coin</span><span class="pkgPrice">1,99 € (test)</span></span></button>
-      <button class="pkgBtn" data-pkg="p1200"><span class="pkgIcon">📦</span><span class="pkgInfo"><span class="pkgAmount">1.200 Blok Coin</span><span class="pkgPrice">3,49 € (test)</span></span></button>
-      <button class="pkgBtn best" data-pkg="p2000"><span class="pkgIcon">👑</span><span class="pkgInfo"><span class="pkgAmount">2.000 Blok Coin</span><span class="pkgPrice">4,99 € (test)</span></span></button>
+      <p class="storeNote">Test mode — no real payment is taken, coins are added instantly.</p>
+      <button class="pkgBtn" data-pkg="p100"><span class="pkgIcon">🪙</span><span class="pkgInfo"><span class="pkgAmount">100 Blok Coin</span><span class="pkgPrice">€0.50 (test)</span></span></button>
+      <button class="pkgBtn" data-pkg="p250"><span class="pkgIcon">👛</span><span class="pkgInfo"><span class="pkgAmount">250 Blok Coin</span><span class="pkgPrice">€0.99 (test)</span></span></button>
+      <button class="pkgBtn" data-pkg="p600"><span class="pkgIcon">💰</span><span class="pkgInfo"><span class="pkgAmount">600 Blok Coin</span><span class="pkgPrice">€1.99 (test)</span></span></button>
+      <button class="pkgBtn" data-pkg="p1200"><span class="pkgIcon">📦</span><span class="pkgInfo"><span class="pkgAmount">1,200 Blok Coin</span><span class="pkgPrice">€3.49 (test)</span></span></button>
+      <button class="pkgBtn best" data-pkg="p2000"><span class="pkgIcon">👑</span><span class="pkgInfo"><span class="pkgAmount">2,000 Blok Coin</span><span class="pkgPrice">€4.99 (test)</span></span></button>
     </div>
     <div id="storePanelCosmetics" style="display:none">
       <div id="cosmeticsList"></div>
     </div>
     <p id="storeMsg"></p>
-    <button id="closeStoreBtn" class="secondary">Kapat</button>
+    <button id="closeStoreBtn" class="secondary">Close</button>
   </div>
 </div>
 
@@ -610,16 +610,16 @@ const SOLO_BONUS_MULTIPLIER = 1.5;
 // {shape,color,used} olarak zaten hazır gönderiyor, istemci sadece render ediyor.
 
 const COSMETIC_CATALOG = [
-  { id: 'skin_neon', name: 'Neon Blok', price: 200, cat: 'skin', icon: '🟣', swatch: 'linear-gradient(135deg,#ff2d78,#00e5ff)' },
-  { id: 'skin_gold', name: 'Altın Blok', price: 400, cat: 'skin', icon: '🟡', swatch: 'linear-gradient(135deg,#f5c542,#b8860b)' },
-  { id: 'skin_ice', name: 'Buz Blok', price: 350, cat: 'skin', icon: '🔵', swatch: 'linear-gradient(135deg,#a8e6ff,#5bc8ff)' },
-  { id: 'skin_galaxy', name: 'Galaksi Blok', price: 600, cat: 'skin', icon: '🟣', swatch: 'linear-gradient(135deg,#8a2be2,#4b0082)' },
-  { id: 'skin_fire', name: 'Ateş Blok', price: 500, cat: 'skin', icon: '🔴', swatch: 'linear-gradient(135deg,#ff6f00,#d50000)' },
-  { id: 'skin_legend', name: 'Efsanevi Blok', price: 1000, cat: 'skin', icon: '✨', swatch: 'linear-gradient(135deg,#ffd700,#ff00ff)' },
-  { id: 'frame_classic', name: 'Profil Çerçevesi', price: 150, cat: 'frame', icon: '🖼️', swatch: 'linear-gradient(135deg,#ffd76b,#ff8a65)' },
-  { id: 'victory_classic', name: 'Zafer Animasyonu', price: 300, cat: 'victory', icon: '🏆', swatch: 'linear-gradient(135deg,#ffd700,#ffa93b)' },
-  { id: 'theme_classic', name: 'Tahta Teması', price: 450, cat: 'theme', icon: '🎨', swatch: 'linear-gradient(135deg,#ffc850,#6e5adc)' },
-  { id: 'emoji_classic', name: 'Emoji Paketi', price: 200, cat: 'emoji', icon: '😄', swatch: 'linear-gradient(135deg,#ffb63b,#ff6bd6)' },
+  { id: 'skin_neon', name: 'Neon Block', price: 200, cat: 'skin', icon: '🟣', swatch: 'linear-gradient(135deg,#ff2d78,#00e5ff)' },
+  { id: 'skin_gold', name: 'Gold Block', price: 400, cat: 'skin', icon: '🟡', swatch: 'linear-gradient(135deg,#f5c542,#b8860b)' },
+  { id: 'skin_ice', name: 'Ice Block', price: 350, cat: 'skin', icon: '🔵', swatch: 'linear-gradient(135deg,#a8e6ff,#5bc8ff)' },
+  { id: 'skin_galaxy', name: 'Galaxy Block', price: 600, cat: 'skin', icon: '🟣', swatch: 'linear-gradient(135deg,#8a2be2,#4b0082)' },
+  { id: 'skin_fire', name: 'Fire Block', price: 500, cat: 'skin', icon: '🔴', swatch: 'linear-gradient(135deg,#ff6f00,#d50000)' },
+  { id: 'skin_legend', name: 'Legendary Block', price: 1000, cat: 'skin', icon: '✨', swatch: 'linear-gradient(135deg,#ffd700,#ff00ff)' },
+  { id: 'frame_classic', name: 'Profile Frame', price: 150, cat: 'frame', icon: '🖼️', swatch: 'linear-gradient(135deg,#ffd76b,#ff8a65)' },
+  { id: 'victory_classic', name: 'Victory Animation', price: 300, cat: 'victory', icon: '🏆', swatch: 'linear-gradient(135deg,#ffd700,#ffa93b)' },
+  { id: 'theme_classic', name: 'Board Theme', price: 450, cat: 'theme', icon: '🎨', swatch: 'linear-gradient(135deg,#ffc850,#6e5adc)' },
+  { id: 'emoji_classic', name: 'Emoji Pack', price: 200, cat: 'emoji', icon: '😄', swatch: 'linear-gradient(135deg,#ffb63b,#ff6bd6)' },
 ];
 const STREAK_TEXT = { 2: 'DOUBLE!', 3: 'TRIPLE!', 4: 'SUPER STREAK!', 5: 'MEGA STREAK!' };
 // Yalnızca görsel — kazanan dilim ve miktarı sunucu belirler, buradaki dizi
@@ -627,7 +627,7 @@ const STREAK_TEXT = { 2: 'DOUBLE!', 3: 'TRIPLE!', 4: 'SUPER STREAK!', 5: 'MEGA S
 const WHEEL_SEGMENTS = [50, 100, 75, 150, 100, 250, 75, 500];
 
 let ws, board, tray, score, streak, myOver;
-let opp = { score: 0, name: 'Rakip' };
+let opp = { score: 0, name: 'Opponent' };
 let cellSize = 42;
 let coins = 0, highScore = 0, highScoreBonus = 0;
 let inventory = [];
@@ -706,10 +706,10 @@ function connect() {
       if (m.board) m.board.forEach((v, i) => miniCells[i].className = v ? 'c' + v : '');
       updateOppStreakBadge(m.streak || 0);
     }
-    else if (m.t === 'oppStuck') showOppBanner('Rakibin elendi! Devam edip etmeyeceğine karar veriyor...');
+    else if (m.t === 'oppStuck') showOppBanner('Your opponent got stuck! Deciding whether to continue...');
     else if (m.t === 'oppContinued') {
-      if (m.method === 'ad') showOppBanner('Rakibin reklam izleyerek oyuna geri döndü! 🎬');
-      else showOppBanner(`Rakibin ${m.amount} Blok Coin harcayarak oyuna geri döndü! 🪙`);
+      if (m.method === 'ad') showOppBanner('Your opponent came back by watching an ad! 🎬');
+      else showOppBanner(`Your opponent came back by spending ${m.amount} Blok Coin! 🪙`);
     }
     else if (m.t === 'moveTimer') startMoveCountdown(m.deadline);
     else if (m.t === 'stuckOptions') showStuckScreen(m);
@@ -729,17 +729,17 @@ function connect() {
     }
     else if (m.t === 'loginReward') {
       coins = m.coins; updateCoinBadge();
-      $('loginRewardAmountText').textContent = `+${m.amount} Blok Coin kazandın!`;
-      $('loginRewardStreakText').textContent = `Seri: ${m.streak}. gün`;
+      $('loginRewardAmountText').textContent = `You earned +${m.amount} Blok Coin!`;
+      $('loginRewardStreakText').textContent = `Streak: Day ${m.streak}`;
       if (m.weeklyBonus > 0) {
-        $('loginRewardWeeklyText').textContent = `🎉 7 gün üst üste giriş bonusu: +${m.weeklyBonus} Coin!`;
+        $('loginRewardWeeklyText').textContent = `🎉 7-day login streak bonus: +${m.weeklyBonus} Coin!`;
         $('loginRewardWeeklyText').style.display = 'block';
       } else {
         $('loginRewardWeeklyText').style.display = 'none';
       }
       $('loginRewardAdBtn').style.display = '';
       $('loginRewardAdBtn').disabled = false;
-      $('loginRewardAdBtn').textContent = `🎬 Reklam İzle (+${m.adBonus} Coin)`;
+      $('loginRewardAdBtn').textContent = `🎬 Watch Ad (+${m.adBonus} Coin)`;
       $('loginRewardOverlay').classList.add('active');
     }
     else if (m.t === 'loginAdStart') showAdOverlay(
@@ -748,7 +748,7 @@ function connect() {
     );
     else if (m.t === 'loginAdDoubled') {
       coins = m.coins; updateCoinBadge();
-      $('loginRewardAmountText').textContent = `+${m.added} Blok Coin daha kazandın! 🎉`;
+      $('loginRewardAmountText').textContent = `You earned +${m.added} more Blok Coin! 🎉`;
       $('loginRewardAdBtn').style.display = 'none';
     }
     else if (m.t === 'loginAdDenied') {
@@ -762,18 +762,18 @@ function connect() {
     else if (m.t === 'spinResult') {
       spinWheelTo(m.segmentIndex);
       dailyStreakDisplay = m.streak;
-      $('dailyStreakText').textContent = `Seri: ${m.streak}. gün`;
+      $('dailyStreakText').textContent = `Streak: Day ${m.streak}`;
       coins = m.coins; updateCoinBadge();
       canSpinToday = false;
       $('dailyDot').style.display = 'none';
       setTimeout(() => {
-        $('dailyResultText').textContent = `🎉 ${m.amount} Blok Coin kazandın!`;
+        $('dailyResultText').textContent = `🎉 You won ${m.amount} Blok Coin!`;
         $('dailyAdBtn').style.display = '';
         $('spinWheelBtn').style.display = 'none';
       }, 3100);
     }
     else if (m.t === 'spinDenied') {
-      $('dailyResultText').textContent = 'Bugünkü bonus çevirmeni zaten yaptın, yarın tekrar gel!';
+      $('dailyResultText').textContent = "You've already spun today's bonus, come back tomorrow!";
       $('spinWheelBtn').style.display = 'none';
     }
     else if (m.t === 'dailyAdStart') showAdOverlay(
@@ -782,33 +782,33 @@ function connect() {
     );
     else if (m.t === 'dailyAdDoubled') {
       coins = m.coins; updateCoinBadge();
-      $('dailyResultText').textContent = `🎉 Reklamla ikiye katladın! +${m.added} Blok Coin daha.`;
+      $('dailyResultText').textContent = `🎉 You doubled it with an ad! +${m.added} more Blok Coin.`;
       $('dailyAdBtn').style.display = 'none';
     }
     else if (m.t === 'dailyAdDenied') {
-      $('dailyResultText').textContent = m.reason === 'used' ? 'Bu ödülü zaten ikiye katladın.' : '';
+      $('dailyResultText').textContent = m.reason === 'used' ? "You've already doubled this reward." : '';
     }
     else if (m.t === 'coinsUpdated') {
       coins = m.coins;
       updateCoinBadge();
       const el = $('storeMsg');
-      el.textContent = m.real ? `✅ Ödeme alındı — +${m.added} Blok Coin eklendi!` : `+${m.added} Blok Coin eklendi!`;
+      el.textContent = m.real ? `✅ Payment received — +${m.added} Blok Coin added!` : `+${m.added} Blok Coin added!`;
       setTimeout(() => { el.textContent = ''; }, 4000);
     }
     else if (m.t === 'checkoutUrl') {
       window.location.href = m.url; // Stripe'ın gerçek (test modu) ödeme sayfasına yönlendirir
     }
     else if (m.t === 'checkoutError') {
-      $('storeMsg').textContent = m.message || 'Ödeme işlenemedi.';
+      $('storeMsg').textContent = m.message || 'Payment could not be processed.';
     }
     else if (m.t === 'cosmeticBought') {
       coins = m.coins; inventory = m.inventory; equipped = m.equipped;
       updateCoinBadge(); applyCosmetics();
-      $('storeMsg').textContent = 'Satın alındı ve kullanılıyor!';
+      $('storeMsg').textContent = 'Purchased and equipped!';
       setTimeout(() => { $('storeMsg').textContent = ''; }, 2000);
     }
     else if (m.t === 'purchaseDenied') {
-      $('storeMsg').textContent = m.reason === 'coins' ? 'Yetersiz Blok Coin.' : 'Bu ürüne zaten sahipsin.';
+      $('storeMsg').textContent = m.reason === 'coins' ? 'Not enough Blok Coin.' : 'You already own this item.';
     }
     else if (m.t === 'equipped') {
       equipped[m.cat] = m.id;
@@ -834,13 +834,13 @@ function connect() {
     }
     else if (m.t === 'authError') {
       const reasons = {
-        'invalid-username': 'Kullanıcı adı 3-20 karakter, sadece harf/rakam/_ olmalı.',
-        'invalid-password': 'Şifre en az 4 karakter olmalı.',
-        taken: 'Bu kullanıcı adı alınmış.',
-        'not-found': 'Böyle bir kullanıcı yok.',
-        'wrong-password': 'Şifre yanlış.',
+        'invalid-username': 'Username must be 3-20 characters, letters/numbers/_ only.',
+        'invalid-password': 'Password must be at least 4 characters.',
+        taken: 'This username is already taken.',
+        'not-found': 'No such user exists.',
+        'wrong-password': 'Incorrect password.',
       };
-      $('authError').textContent = reasons[m.reason] || 'İşlem tamamlanamadı.';
+      $('authError').textContent = reasons[m.reason] || 'Action could not be completed.';
     }
     else if (m.t === 'authExpired') {
       authToken = null; setToken(null);
@@ -853,46 +853,46 @@ function connect() {
     }
     else if (m.t === 'referralReward') {
       coins = m.coins; updateCoinBadge();
-      showOppBanner(`🎉 ${m.friend} davetinle üye oldu! +${m.amount} Blok Coin kazandın!`);
+      showOppBanner(`🎉 ${m.friend} signed up with your invite! You earned +${m.amount} Blok Coin!`);
     }
     else if (m.t === 'friendsList') renderFriends(m);
     else if (m.t === 'friendError') {
       const reasons = {
-        needLogin: 'Önce giriş yapmalısın.',
-        'not-found': 'Böyle bir kullanıcı yok.',
-        self: 'Kendini ekleyemezsin.',
-        already: 'Zaten arkadaşsınız.',
+        needLogin: 'You need to log in first.',
+        'not-found': 'No such user exists.',
+        self: "You can't add yourself.",
+        already: 'You are already friends.',
       };
-      $('friendsError').textContent = reasons[m.reason] || 'İşlem tamamlanamadı.';
+      $('friendsError').textContent = reasons[m.reason] || 'Action could not be completed.';
     }
     else if (m.t === 'friendRequestSent') {
       $('friendsError').textContent = '';
-      showOppBanner(`${m.username} kullanıcısına arkadaşlık isteği gönderildi.`);
+      showOppBanner(`Friend request sent to ${m.username}.`);
     }
     else if (m.t === 'friendRequestReceived') {
-      showOppBanner(`${m.username} sana arkadaşlık isteği gönderdi! Arkadaşlar panelinden onaylayabilirsin.`);
+      showOppBanner(`${m.username} sent you a friend request! You can accept it from the Friends panel.`);
     }
     else if (m.t === 'friendAccepted') {
-      showOppBanner(`${m.username} arkadaşlık isteğini kabul etti! 🎉`);
+      showOppBanner(`${m.username} accepted your friend request! 🎉`);
     }
     else if (m.t === 'challengeSent') {
-      showOppBanner(`${m.username} kullanıcısına meydan okuman gönderildi, bekleniyor...`);
+      showOppBanner(`Your challenge to ${m.username} was sent, waiting...`);
     }
     else if (m.t === 'challengeError') {
       const reasons = {
-        'not-friend': 'Bu kişi arkadaş listende değil.',
-        offline: 'Bu arkadaşın şu an çevrimdışı.',
-        busy: 'Bu arkadaş şu an başka bir maçta.',
-        'you-busy': 'Zaten bir maçtasın.',
+        'not-friend': 'This person is not on your friends list.',
+        offline: 'This friend is currently offline.',
+        busy: 'This friend is currently in another match.',
+        'you-busy': "You're already in a match.",
       };
-      $('friendsError').textContent = reasons[m.reason] || 'Meydan okuma gönderilemedi.';
+      $('friendsError').textContent = reasons[m.reason] || 'Challenge could not be sent.';
     }
     else if (m.t === 'challengeReceived') {
-      $('challengeFromText').textContent = `${m.username} seni meydan okudu!`;
+      $('challengeFromText').textContent = `${m.username} challenged you!`;
       $('challengeOverlay').classList.add('active');
     }
     else if (m.t === 'challengeDeclined') {
-      showOppBanner(`${m.username} meydan okumanı reddetti.`);
+      showOppBanner(`${m.username} declined your challenge.`);
     }
   };
   ws.onclose = () => setTimeout(connect, 1000);
@@ -902,7 +902,7 @@ connect();
 function join() {
   mode = 'multi';
   document.body.classList.remove('mode-solo');
-  const name = $('nameInput').value.trim() || 'Oyuncu' + Math.floor(Math.random() * 1000);
+  const name = $('nameInput').value.trim() || 'Player' + Math.floor(Math.random() * 1000);
   $('nameInput').value = name;
   ws.send(JSON.stringify({ t: 'join', name }));
 }
@@ -910,7 +910,7 @@ $('multiBtn').onclick = join;
 $('soloBtn').onclick = () => {
   mode = 'solo';
   document.body.classList.add('mode-solo');
-  const name = $('nameInput').value.trim() || 'Oyuncu' + Math.floor(Math.random() * 1000);
+  const name = $('nameInput').value.trim() || 'Player' + Math.floor(Math.random() * 1000);
   $('nameInput').value = name;
   ws.send(JSON.stringify({ t: 'soloStart' }));
 };
@@ -932,10 +932,10 @@ function updateAccountStatus() {
   const el = $('accountStatus');
   if (username) {
     el.textContent = `👤 ${username}`;
-    $('openAuthBtn').textContent = '🚪 Çıkış Yap';
+    $('openAuthBtn').textContent = '🚪 Log Out';
   } else {
-    el.textContent = '👤 Misafir';
-    $('openAuthBtn').textContent = '🔐 Giriş / Kayıt';
+    el.textContent = '👤 Guest';
+    $('openAuthBtn').textContent = '🔐 Log In / Sign Up';
   }
 }
 updateAccountStatus();
@@ -962,7 +962,7 @@ $('authRegisterBtn').onclick = () => {
 // --- arkadaşlar + meydan okuma ---
 function openFriendsOverlay() {
   if (!username) {
-    $('authError').textContent = 'Arkadaş davet etmek/eklemek için önce giriş yapmalısın.';
+    $('authError').textContent = 'You need to log in first to invite/add friends.';
     $('authOverlay').classList.add('active');
     return;
   }
@@ -980,8 +980,8 @@ $('copyInviteBtn').onclick = () => {
   input.select();
   try {
     navigator.clipboard.writeText(input.value).then(() => {
-      $('copyInviteBtn').textContent = 'Kopyalandı!';
-      setTimeout(() => { $('copyInviteBtn').textContent = 'Kopyala'; }, 1500);
+      $('copyInviteBtn').textContent = 'Copied!';
+      setTimeout(() => { $('copyInviteBtn').textContent = 'Copy'; }, 1500);
     });
   } catch {}
 };
@@ -1031,9 +1031,9 @@ function spinWheelTo(idx) {
 $('openDailyBtn').onclick = () => {
   $('dailyResultText').textContent = '';
   $('dailyAdBtn').style.display = 'none';
-  $('dailyStreakText').textContent = `Seri: ${dailyStreakDisplay || 0}. gün`;
+  $('dailyStreakText').textContent = `Streak: Day ${dailyStreakDisplay || 0}`;
   $('spinWheelBtn').style.display = canSpinToday ? '' : 'none';
-  if (!canSpinToday) $('dailyResultText').textContent = 'Bugünkü bonus çevirmeni zaten yaptın, yarın tekrar gel!';
+  if (!canSpinToday) $('dailyResultText').textContent = "You've already spun today's bonus, come back tomorrow!";
   $('dailyOverlay').classList.add('active');
 };
 $('dailyCloseBtn').onclick = () => $('dailyOverlay').classList.remove('active');
@@ -1057,11 +1057,11 @@ function renderFriends(m) {
   (m.requests || []).forEach(r => {
     const row = document.createElement('div');
     row.className = 'friendRow';
-    row.innerHTML = `<span class="fName">${r.username} istek gönderdi</span>`;
+    row.innerHTML = `<span class="fName">${r.username} sent a request</span>`;
     const actions = document.createElement('div');
     actions.className = 'fActions';
     const accept = document.createElement('button');
-    accept.textContent = '✓ Kabul Et';
+    accept.textContent = '✓ Accept';
     accept.onclick = () => ws.send(JSON.stringify({ t: 'acceptFriend', username: r.username }));
     const decline = document.createElement('button');
     decline.textContent = '✕'; decline.className = 'secondary';
@@ -1080,7 +1080,7 @@ function renderFriends(m) {
     const actions = document.createElement('div');
     actions.className = 'fActions';
     const challengeBtn = document.createElement('button');
-    challengeBtn.textContent = 'Meydan Oku';
+    challengeBtn.textContent = 'Challenge';
     challengeBtn.disabled = !f.online;
     challengeBtn.onclick = () => ws.send(JSON.stringify({ t: 'challengeFriend', username: f.username }));
     const removeBtn = document.createElement('button');
@@ -1110,7 +1110,7 @@ $('coinBadge').onclick = () => {
 $('closeStoreBtn').onclick = () => $('storeOverlay').classList.remove('active');
 document.querySelectorAll('.pkgBtn[data-pkg]').forEach(btn => {
   btn.onclick = () => {
-    $('storeMsg').textContent = 'Ödeme sayfasına yönlendiriliyor...';
+    $('storeMsg').textContent = 'Redirecting to payment page...';
     ws.send(JSON.stringify({ t: 'createCheckout', package: btn.dataset.pkg }));
   };
 });
@@ -1132,7 +1132,7 @@ document.querySelectorAll('.pkgBtn[data-pkg]').forEach(btn => {
       trySend();
     }
   } else if (status === 'cancel') {
-    setTimeout(() => { $('storeMsg').textContent = 'Ödeme iptal edildi.'; }, 300);
+    setTimeout(() => { $('storeMsg').textContent = 'Payment cancelled.'; }, 300);
   }
 })();
 $('storeTabCoinsBtn').onclick = () => switchStoreTab('coins');
@@ -1158,10 +1158,10 @@ function renderCosmeticsTab() {
       btn.innerHTML = `${iconHtml}<span class="pkgInfo"><span class="pkgAmount">${item.name}</span><span class="pkgPrice">${item.price} 🪙</span></span>`;
       btn.onclick = () => ws.send(JSON.stringify({ t: 'buyCosmetic', id: item.id }));
     } else if (isEquipped) {
-      btn.innerHTML = `${iconHtml}<span class="pkgInfo"><span class="pkgAmount">${item.name} ✓</span><span class="pkgPrice">Kaldır</span></span>`;
+      btn.innerHTML = `${iconHtml}<span class="pkgInfo"><span class="pkgAmount">${item.name} ✓</span><span class="pkgPrice">Remove</span></span>`;
       btn.onclick = () => ws.send(JSON.stringify({ t: 'unequipCosmetic', cat: item.cat }));
     } else {
-      btn.innerHTML = `${iconHtml}<span class="pkgInfo"><span class="pkgAmount">${item.name}</span><span class="pkgPrice">Kullan</span></span>`;
+      btn.innerHTML = `${iconHtml}<span class="pkgInfo"><span class="pkgAmount">${item.name}</span><span class="pkgPrice">Equip</span></span>`;
       btn.onclick = () => ws.send(JSON.stringify({ t: 'equipCosmetic', id: item.id }));
     }
     wrap.appendChild(btn);
@@ -1198,7 +1198,7 @@ function startGame(state, oppName, startCoins) {
   $('myName').textContent = $('nameInput').value;
   if (mode === 'solo') {
     opp = { score: 0, name: '' };
-    $('oppName').textContent = 'Rekor';
+    $('oppName').textContent = 'Best';
     $('oppScore').textContent = highScore;
     $('oppStreak').style.display = 'none';
   } else {
@@ -1307,7 +1307,7 @@ function showStuckScreen(m) {
   updateCoinBadge();
   $('stuckScore').textContent = score;
   $('stuckCoins').textContent = coins;
-  $('continueCoinBtn').textContent = `${m.coinCost} Blok Coin ile devam et`;
+  $('continueCoinBtn').textContent = `Continue with ${m.coinCost} Blok Coin`;
   $('continueCoinBtn').disabled = coins < m.coinCost;
   $('continueAdBtn').style.display = m.adAvailable ? '' : 'none';
   $('stuckError').textContent = '';
@@ -1352,13 +1352,13 @@ function handleContinueDenied(m) {
   const el = $('stuckError');
   if (m.reason === 'coins') {
     if (typeof m.coins === 'number') { coins = m.coins; updateCoinBadge(); }
-    el.textContent = 'Yetersiz Blok Coin.';
+    el.textContent = 'Not enough Blok Coin.';
     $('continueCoinBtn').disabled = true;
   } else if (m.reason === 'adUsed') {
-    el.textContent = 'Reklam hakkını zaten kullandın.';
+    el.textContent = "You've already used your ad option.";
     $('continueAdBtn').style.display = 'none';
   } else {
-    el.textContent = 'İşlem tamamlanamadı.';
+    el.textContent = 'Action could not be completed.';
   }
 }
 
@@ -1424,7 +1424,7 @@ function showAdOverlay(onDone, onFail) {
     return;
   }
   $('adContainer').innerHTML = '';
-  $('adStatusText').textContent = 'Reklamı izlemek için başlat.';
+  $('adStatusText').textContent = 'Tap start to watch the ad.';
   $('adStartBtn').style.display = '';
   $('adOverlay').classList.add('active');
 }
@@ -1435,7 +1435,7 @@ function cleanupAds() {
 
 function failAd(message) {
   cleanupAds();
-  $('adStatusText').textContent = `${message} Tekrar deneyebilir ya da vazgeçebilirsin.`;
+  $('adStatusText').textContent = `${message} You can try again or cancel.`;
   $('adStartBtn').style.display = '';
   const fail = currentAdFail; currentAdDone = null; currentAdFail = null;
   if (fail) fail();
@@ -1450,26 +1450,26 @@ function onAdComplete() {
 
 function onAdsManagerLoaded(adsManagerLoadedEvent) {
   adsManager = adsManagerLoadedEvent.getAdsManager($('adContentVideo'));
-  adsManager.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, () => failAd('Reklam oynatılamadı.'));
+  adsManager.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, () => failAd('Ad could not be played.'));
   adsManager.addEventListener(google.ima.AdEvent.Type.COMPLETE, onAdComplete);
-  adsManager.addEventListener(google.ima.AdEvent.Type.SKIPPED, () => failAd('Reklam tamamlanmadan atlandı — ödül verilmedi.'));
+  adsManager.addEventListener(google.ima.AdEvent.Type.SKIPPED, () => failAd('Ad was skipped before finishing — no reward given.'));
   try {
     const box = $('adContainer');
     adsManager.init(box.clientWidth || 300, box.clientHeight || 210, google.ima.ViewMode.NORMAL);
     adsManager.start();
-    $('adStatusText').textContent = 'Reklam oynatılıyor...';
+    $('adStatusText').textContent = 'Playing ad...';
   } catch (e) {
-    failAd('Reklam başlatılamadı.');
+    failAd('Ad could not be started.');
   }
 }
 
 function startAdPlayback() {
   if (!window.google || !google.ima) {
-    failAd('Reklam sistemi yüklenemedi (ağ bağlantısını kontrol et).');
+    failAd('Ad system could not load (check your network connection).');
     return;
   }
   $('adStartBtn').style.display = 'none';
-  $('adStatusText').textContent = 'Reklam yükleniyor...';
+  $('adStatusText').textContent = 'Loading ad...';
   try {
     if (!adDisplayContainer) {
       adDisplayContainer = new google.ima.AdDisplayContainer($('adContainer'), $('adContentVideo'));
@@ -1478,7 +1478,7 @@ function startAdPlayback() {
     if (!adsLoader) {
       adsLoader = new google.ima.AdsLoader(adDisplayContainer);
       adsLoader.addEventListener(google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED, onAdsManagerLoaded, false);
-      adsLoader.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, () => failAd('Reklam yüklenemedi.'), false);
+      adsLoader.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, () => failAd('Ad could not be loaded.'), false);
     }
     const adsRequest = new google.ima.AdsRequest();
     adsRequest.adTagUrl = AD_TAG_URL + Date.now();
@@ -1489,7 +1489,7 @@ function startAdPlayback() {
     adsRequest.nonLinearAdSlotHeight = 150;
     adsLoader.requestAds(adsRequest);
   } catch (e) {
-    failAd('Reklam sistemi başlatılamadı.');
+    failAd('Ad system could not be started.');
   }
 }
 
@@ -1536,25 +1536,25 @@ function showMatchOver(m) {
   myOver = true;
   const ov = $('overlay'), title = $('overlayTitle'), info = $('overlayInfo');
   const reasonText = {
-    giveup: m.result === 'lose' ? 'Pes ettin.' : 'Rakibin pes etti.',
-    timeout: m.result === 'lose' ? 'Karar süren doldu.' : 'Rakibinin karar süresi doldu.',
-    moveTimeout: m.result === 'lose' ? 'Hamle süren doldu.' : 'Rakibinin hamle süresi doldu.',
-    disconnect: m.result === 'win' ? 'Rakibin bağlantısı koptu.' : '',
-    leave: m.result === 'win' ? 'Rakibin oyundan ayrıldı.' : '',
+    giveup: m.result === 'lose' ? 'You gave up.' : 'Your opponent gave up.',
+    timeout: m.result === 'lose' ? 'Your decision time ran out.' : "Your opponent's decision time ran out.",
+    moveTimeout: m.result === 'lose' ? 'Your move time ran out.' : "Your opponent's move time ran out.",
+    disconnect: m.result === 'win' ? 'Your opponent disconnected.' : '',
+    leave: m.result === 'win' ? 'Your opponent left the game.' : '',
     simultaneous: m.result === 'win'
-      ? 'İkiniz de aynı anda hamlesiz kaldınız — skorun daha yüksekti!'
-      : 'İkiniz de aynı anda hamlesiz kaldınız — rakibinin skoru daha yüksekti.',
+      ? 'You both got stuck at the same time — your score was higher!'
+      : 'You both got stuck at the same time — your opponent had a higher score.',
   };
   $('confetti').innerHTML = '';
   if (m.result === 'win') {
-    title.textContent = '🏆 Kazandın!';
+    title.textContent = '🏆 You Won!';
     title.classList.toggle('victory-fx', !!equipped.victory);
     if (equipped.victory) spawnConfetti();
   } else {
     title.classList.remove('victory-fx');
-    title.textContent = m.result === 'lose' ? '😞 Kaybettin' : '🤝 Berabere';
+    title.textContent = m.result === 'lose' ? '😞 You Lost' : '🤝 Draw';
   }
-  info.textContent = `${reasonText[m.reason] || ''} Puanın: ${score}`.trim();
+  info.textContent = `${reasonText[m.reason] || ''} Your score: ${score}`.trim();
   ov.classList.add('active');
 }
 
@@ -1578,13 +1578,13 @@ function showSoloStuck(m) {
   stopMoveCountdown();
   coins = m.coins;
   updateCoinBadge();
-  $('soloTitle').textContent = 'OYUN BİTTİ!';
+  $('soloTitle').textContent = 'GAME OVER!';
   $('soloScore').textContent = score;
   $('soloHigh').textContent = highScore;
   $('soloBonusPreview').textContent = Math.round(score * SOLO_BONUS_MULTIPLIER);
   $('soloAdBonusBtn').style.display = m.adBonusAvailable ? '' : 'none';
   $('soloAdContinueBtn').style.display = m.adContinueAvailable ? '' : 'none';
-  $('soloCoinContinueBtn').textContent = `🪙 ${m.coinCost} Coin → Oyuna Devam Et`;
+  $('soloCoinContinueBtn').textContent = `🪙 ${m.coinCost} Coin → Continue Playing`;
   $('soloCoinContinueBtn').disabled = coins < m.coinCost;
   $('soloError').textContent = '';
   $('soloChoices').style.display = '';
@@ -1596,16 +1596,16 @@ function handleSoloDenied(m) {
   const el = $('soloError');
   if (m.reason === 'coins') {
     if (typeof m.coins === 'number') { coins = m.coins; updateCoinBadge(); }
-    el.textContent = 'Yetersiz Blok Coin.';
+    el.textContent = 'Not enough Blok Coin.';
     $('soloCoinContinueBtn').disabled = true;
   } else if (m.reason === 'adUsed') {
-    el.textContent = 'Reklamla devam etme hakkını zaten kullandın.';
+    el.textContent = "You've already used your ad-continue option.";
     $('soloAdContinueBtn').style.display = 'none';
   } else if (m.reason === 'bonusAdUsed') {
-    el.textContent = 'Skor bonus reklamını zaten kullandın.';
+    el.textContent = "You've already used your score bonus ad.";
     $('soloAdBonusBtn').style.display = 'none';
   } else {
-    el.textContent = 'İşlem tamamlanamadı.';
+    el.textContent = 'Action could not be completed.';
   }
 }
 
@@ -1648,13 +1648,13 @@ function showSoloFinal(m) {
   // Reklam bonuslu skor ayrı rekor havuzunda tutulur (adil sıralamayı bozmasın diye);
   // "yeni rekor" karşılaştırması bu hamlenin ait olduğu havuza göre yapılır.
   const relevantHigh = lastSoloBonusApplied ? highScoreBonus : highScore;
-  $('soloTitle').textContent = m.timedOut ? '⏱ Süre Doldu!' : 'Skor Kaydedildi';
+  $('soloTitle').textContent = m.timedOut ? "⏱ Time's Up!" : 'Score Saved';
   $('soloScore').textContent = score;
   $('soloHigh').textContent = highScore;
   if (score >= relevantHigh && score > 0) {
-    $('soloResolvedMsg').textContent = lastSoloBonusApplied ? '🎉 Yeni bonuslu rekor!' : '🎉 Yeni rekor!';
+    $('soloResolvedMsg').textContent = lastSoloBonusApplied ? '🎉 New bonus best score!' : '🎉 New best score!';
   } else {
-    $('soloResolvedMsg').textContent = `En iyi skorun: ${highScore}`;
+    $('soloResolvedMsg').textContent = `Your best score: ${highScore}`;
   }
   $('soloChoices').style.display = 'none';
   $('soloResolved').style.display = '';
