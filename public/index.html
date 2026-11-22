@@ -1,0 +1,1697 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Blok Yarışı</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  :root {
+    --c1:#ff5c5c; --c2:#ffa93b; --c3:#ffe14d; --c4:#5cd65c;
+    --c5:#4dc3ff; --c6:#7a6bff; --c7:#ff6bd6; --c8:#38e0c0;
+  }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(160deg, #1a1f3c, #2d1b4e);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    touch-action: none; overflow: hidden;
+  }
+  .screen { display: none; flex-direction: column; align-items: center; gap: 16px; padding: 16px; }
+  .screen.active { display: flex; }
+  h1 { font-size: 28px; letter-spacing: 1px; }
+  input {
+    padding: 12px 16px; border-radius: 10px; border: none; font-size: 16px;
+    text-align: center; width: 220px;
+  }
+  button {
+    padding: 12px 28px; border-radius: 10px; border: none; font-size: 17px; font-weight: 700;
+    background: #ffb63b; color: #4a2c00; cursor: pointer;
+  }
+  button:active { transform: scale(0.96); }
+  button:disabled { opacity: 0.4; cursor: default; }
+  .hint { opacity: 0.7; font-size: 14px; }
+
+  /* --- ana menü: logo + profil kartı + büyük mod butonları --- */
+  #menu { width: 100%; max-width: 340px; gap: 20px; }
+  .menuHeader { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .menuLogo {
+    font-size: 36px; width: 68px; height: 68px; display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle at 30% 30%, rgba(255,214,120,0.35), rgba(122,107,255,0.3));
+    border-radius: 22px; box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+  }
+  .menuHeader h1 { font-size: 24px; }
+  .menuHeader .hint { text-align: center; }
+
+  .profileCard {
+    width: 100%; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .profileCard input { width: 100%; }
+  .profileStats {
+    display: flex; justify-content: space-between; gap: 8px; font-size: 13px; opacity: 0.9; flex-wrap: wrap;
+  }
+  .utilityRow { display: flex; gap: 8px; }
+  .utilityBtn {
+    flex: 1; background: rgba(255,255,255,0.09); color: #fff; font-size: 13px; font-weight: 700;
+    padding: 10px 6px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.14);
+  }
+
+  .modeGrid { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+  .modeBtn {
+    display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 16px;
+    border-radius: 16px; width: 100%; box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  }
+  .modeBtn .modeIcon { font-size: 26px; }
+  .modeBtn .modeTitle { font-size: 17px; font-weight: 800; }
+  .modeBtn .modeSub { font-size: 12px; font-weight: 500; opacity: 0.8; }
+  .modeBtnSolo { background: linear-gradient(135deg, #4dc3ff, #7a6bff); color: #fff; }
+  .modeBtnMulti { background: linear-gradient(135deg, #ffb63b, #ff6bd6); color: #4a2c00; }
+
+  .dailyBtn {
+    width: 100%; background: linear-gradient(90deg, #ffd76b, #ff8a65); color: #4a2c00;
+    display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px;
+    position: relative; padding: 12px 20px;
+  }
+  .dailyDot {
+    position: absolute; top: -4px; right: -4px; width: 13px; height: 13px; border-radius: 50%;
+    background: #ff5c5c; box-shadow: 0 0 0 2px #1a1f3c; display: none;
+    animation: timerPulse 1s ease infinite;
+  }
+
+  .inviteBtn {
+    width: 100%; background: linear-gradient(90deg, #35e3a8, #3bc8ff); color: #063b2e;
+    display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px;
+    padding: 12px 20px; box-shadow: 0 0 0 2px rgba(53,227,168,0.25);
+    animation: inviteGlow 1.8s ease-in-out infinite;
+  }
+  .inviteBtn .inviteBadge {
+    background: #063b2e; color: #35e3a8; font-weight: 800; font-size: 12px;
+    padding: 2px 8px; border-radius: 999px;
+  }
+  @keyframes inviteGlow {
+    0%, 100% { box-shadow: 0 0 0 2px rgba(53,227,168,0.25); }
+    50% { box-shadow: 0 0 0 6px rgba(53,227,168,0.08); }
+  }
+
+  .wheelWrap { position: relative; width: 220px; height: 220px; margin: 6px auto; }
+  .wheelPointer {
+    position: absolute; top: -8px; left: 50%; transform: translateX(-50%); z-index: 5;
+    width: 0; height: 0; border-left: 11px solid transparent; border-right: 11px solid transparent;
+    border-top: 18px solid #ff5c5c; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+  }
+  .wheel {
+    width: 100%; height: 100%; border-radius: 50%; position: relative; overflow: hidden;
+    border: 5px solid rgba(255,255,255,0.3); box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    transition: transform 3s cubic-bezier(.17,.67,.21,1);
+  }
+  .wheelLabel { position: absolute; inset: 0; display: flex; justify-content: center; pointer-events: none; }
+  .wheelLabel span {
+    margin-top: 14px; font-size: 13px; font-weight: 800; color: #1a1f3c;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.35);
+  }
+  #dailyStreakText { font-weight: 700; }
+  #dailyResultText { font-size: 17px; font-weight: 800; min-height: 22px; }
+
+  #game { gap: 8px; }
+  #topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; max-width: 400px; gap: 12px;
+  }
+  .scorebox { text-align: center; flex: 1; }
+  .scorebox .name { font-size: 12px; opacity: 0.75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; }
+  .scorebox .pts { font-size: 24px; font-weight: 800; }
+  #oppStreak { font-size: 11px; font-weight: 800; color: #ffb347; margin-top: 2px; display: none; }
+  #oppMini {
+    display: grid; grid-template-columns: repeat(8, 8px); grid-auto-rows: 8px; gap: 1px;
+    background: rgba(255,255,255,0.08); padding: 3px; border-radius: 6px;
+  }
+  #oppMini div { border-radius: 1px; background: rgba(255,255,255,0.07); }
+  #board {
+    display: grid; grid-template-columns: repeat(8, var(--cell)); grid-auto-rows: var(--cell);
+    gap: 3px; background: rgba(0,0,0,0.35); padding: 6px; border-radius: 12px;
+  }
+  body[data-theme="theme_classic"] #board {
+    background: linear-gradient(135deg, rgba(255,200,80,0.18), rgba(110,90,220,0.28));
+    border: 2px solid rgba(255,255,255,0.2);
+    animation: themeGlow 3s ease-in-out infinite;
+  }
+  @keyframes themeGlow {
+    0%, 100% { box-shadow: 0 0 18px rgba(255,180,80,0.25); }
+    50% { box-shadow: 0 0 32px rgba(120,90,255,0.5); }
+  }
+  #board div { border-radius: 5px; background: rgba(255,255,255,0.09); transition: background 0.1s; }
+  #tray { display: flex; gap: 18px; min-height: 90px; align-items: center; justify-content: center; }
+  .traypiece { display: grid; gap: 2px; cursor: grab; }
+  .traypiece div { width: 18px; height: 18px; border-radius: 3px; }
+  .traypiece.used { visibility: hidden; }
+  #dragEl { position: fixed; display: grid; gap: 3px; pointer-events: none; z-index: 10; }
+  #dragEl div { width: var(--cell); height: var(--cell); border-radius: 5px; }
+  .c1,#board div.c1,#oppMini div.c1{background:var(--c1);}
+  .c2,#board div.c2,#oppMini div.c2{background:var(--c2);}
+  .c3,#board div.c3,#oppMini div.c3{background:var(--c3);}
+  .c4,#board div.c4,#oppMini div.c4{background:var(--c4);}
+  .c5,#board div.c5,#oppMini div.c5{background:var(--c5);}
+  .c6,#board div.c6,#oppMini div.c6{background:var(--c6);}
+  .c7,#board div.c7,#oppMini div.c7{background:var(--c7);}
+  .c8,#board div.c8,#oppMini div.c8{background:var(--c8);}
+  .ghost-ok { outline: 2px solid rgba(255,255,255,0.9); outline-offset: -2px; }
+  .flash { background: #fff !important; }
+
+  /* --- kozmetik blok görünümleri (mağazadan satın alınıp ekiplenince aktif olur) --- */
+  body[data-skin="skin_neon"] {
+    --c1:#ff2d78; --c2:#ff8a00; --c3:#fff700; --c4:#39ff14;
+    --c5:#00e5ff; --c6:#7d5fff; --c7:#ff2de0; --c8:#2dffb0;
+  }
+  body[data-skin="skin_gold"] {
+    --c1:#f5c542; --c2:#e0a94e; --c3:#ffd700; --c4:#c9962c;
+    --c5:#f0c419; --c6:#b8860b; --c7:#ffcc33; --c8:#e6b800;
+  }
+  body[data-skin="skin_ice"] {
+    --c1:#a8e6ff; --c2:#7fd4ff; --c3:#c9f0ff; --c4:#5bc8ff;
+    --c5:#e0faff; --c6:#8fd9f7; --c7:#b3ecff; --c8:#6fc9ff;
+  }
+  body[data-skin="skin_galaxy"] {
+    --c1:#8a2be2; --c2:#4b0082; --c3:#9400d3; --c4:#da70d6;
+    --c5:#7b68ee; --c6:#483d8b; --c7:#ba55d3; --c8:#6a0dad;
+  }
+  body[data-skin="skin_fire"] {
+    --c1:#ff3d00; --c2:#ff6f00; --c3:#ff9100; --c4:#d50000;
+    --c5:#ff1744; --c6:#ff5722; --c7:#dd2c00; --c8:#ff8a00;
+  }
+  body[data-skin="skin_legend"] {
+    --c1:#ffd700; --c2:#ff00ff; --c3:#00ffff; --c4:#ff4500;
+    --c5:#7cfc00; --c6:#ff1493; --c7:#1e90ff; --c8:#ffdf00;
+  }
+  body[data-skin] #board div[class^="c"], body[data-skin] #board div[class*=" c"],
+  body[data-skin] .traypiece div[class^="c"], body[data-skin] .traypiece div[class*=" c"],
+  body[data-skin] #dragEl div[class^="c"], body[data-skin] #dragEl div[class*=" c"] {
+    box-shadow: 0 0 8px rgba(255,255,255,0.5);
+  }
+  body[data-skin="skin_legend"] #board div[class^="c"], body[data-skin="skin_legend"] #board div[class*=" c"] {
+    animation: legendPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes legendPulse {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.35); }
+  }
+
+  body.has-frame #myName {
+    display: inline-block; padding: 2px 10px; border-radius: 8px;
+    background: linear-gradient(90deg, #ffd76b, #ff8a65, #7d5fff, #4dc3ff, #ffd76b);
+    background-size: 300% 100%;
+    animation: frameShift 4s linear infinite;
+    color: #1a1f3c; font-weight: 800;
+    box-shadow: 0 0 10px rgba(255,215,107,0.5);
+  }
+  @keyframes frameShift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+  }
+  body.has-emoji #myName::after {
+    content: ' ✨'; display: inline-block;
+    animation: emojiBounce 1.2s ease-in-out infinite;
+  }
+  @keyframes emojiBounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-4px) rotate(15deg); }
+  }
+
+  #confetti { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  #confetti span {
+    position: absolute; top: -10%; width: 8px; height: 14px; opacity: 0; border-radius: 2px;
+    animation: confettiFall 1.6s ease-in forwards;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(420px) rotate(540deg); opacity: 0; }
+  }
+
+  #overlay {
+    position: fixed; inset: 0; background: rgba(10, 8, 30, 0.88);
+    display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; z-index: 20;
+    text-align: center; padding: 20px;
+  }
+  #overlay.active { display: flex; }
+  #overlayTitle { font-size: 34px; font-weight: 800; }
+  #overlayTitle.victory-fx { animation: victoryPulse 0.6s ease infinite alternate; }
+  @keyframes victoryPulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.14) rotate(-3deg); }
+  }
+  #overlayInfo { font-size: 17px; opacity: 0.85; }
+
+  #oppBanner {
+    position: fixed; top: 14px; left: 50%; z-index: 30; max-width: 90vw;
+    transform: translateX(-50%) translateY(-140%);
+    background: rgba(20, 16, 46, 0.95); color: #fff; padding: 10px 18px; border-radius: 10px;
+    font-size: 14px; text-align: center; pointer-events: none;
+    transition: transform 0.25s ease; box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  }
+  #oppBanner.show { transform: translateX(-50%) translateY(0); }
+
+  #streakBanner {
+    position: fixed; top: 36%; left: 50%; z-index: 35;
+    transform: translate(-50%,-50%) scale(0.4); opacity: 0;
+    font-size: 40px; font-weight: 900; letter-spacing: 1px; color: #fff;
+    text-shadow: 0 0 18px rgba(255,200,80,0.9), 0 0 36px rgba(255,100,200,0.6);
+    pointer-events: none; text-align: center; white-space: nowrap;
+  }
+  #streakBanner.show { animation: streakPop 0.9s cubic-bezier(.2,1.6,.4,1) forwards; }
+  #streakBanner.lvl5 { color: #ffe14d; text-shadow: 0 0 22px rgba(255,80,80,1), 0 0 44px rgba(255,220,80,0.85); }
+  @keyframes streakPop {
+    0% { opacity: 0; transform: translate(-50%,-50%) scale(0.4) rotate(-6deg); }
+    15% { opacity: 1; transform: translate(-50%,-50%) scale(1.15) rotate(2deg); }
+    30% { transform: translate(-50%,-50%) scale(1) rotate(0deg); }
+    75% { opacity: 1; transform: translate(-50%,-50%) scale(1) rotate(0deg); }
+    100% { opacity: 0; transform: translate(-50%,-50%) scale(1.05) rotate(0deg); }
+  }
+
+  .screen-overlay {
+    position: fixed; inset: 0; background: rgba(10, 8, 30, 0.92);
+    display: none; align-items: center; justify-content: center; z-index: 40; padding: 20px;
+  }
+  .screen-overlay.active { display: flex; }
+  .stuckBox {
+    background: rgba(255,255,255,0.06); border-radius: 16px; padding: 24px 22px;
+    text-align: center; max-width: 320px; width: 100%; max-height: 85vh; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .stuckBox h2 { font-size: 22px; }
+  .stuckBox p { font-size: 15px; opacity: 0.9; }
+  .stuckBox button { margin-top: 4px; }
+  .stuckBox button.secondary { background: transparent; color: #ff8787; border: 1px solid #ff8787; }
+  #stuckError, #soloError, #authError, #friendsError { color: #ff8787; font-size: 13px; min-height: 16px; }
+  #adContainer {
+    width: 100%; max-width: 300px; height: 210px; margin: 0 auto;
+    background: #000; border-radius: 10px; position: relative; overflow: hidden;
+  }
+  #friendRequestsList, #friendsList { display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; }
+  .friendRow {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    background: rgba(255,255,255,0.08); border-radius: 10px; padding: 8px 12px;
+  }
+  .friendRow .fName { font-size: 14px; }
+  .friendRow .fActions { display: flex; gap: 6px; }
+  .friendRow button { padding: 6px 10px; font-size: 13px; margin-top: 0; }
+  #stuckTimerLine { font-size: 17px !important; font-weight: 800; }
+  #stuckTimer { font-size: 20px; color: #7fe8a0; }
+  #stuckTimer.warn { color: #ffb347; }
+  #stuckTimer.danger { color: #ff5c5c; animation: timerPulse 0.6s ease infinite; }
+  @keyframes timerPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  #moveTimerBadge {
+    display: none; margin: 0 auto; padding: 5px 18px; border-radius: 14px; width: fit-content;
+    background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.18);
+    font-size: 17px; font-weight: 900; text-align: center; color: #7fe8a0;
+  }
+  #moveTimerBadge.warn { color: #ffb347; border-color: rgba(255,179,71,0.5); }
+  #moveTimerBadge.danger { color: #ff5c5c; border-color: rgba(255,92,92,0.6); animation: timerPulse 0.6s ease infinite; }
+
+  #coinBadge {
+    position: fixed; top: 10px; right: 10px; z-index: 25;
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.1); padding: 7px 14px; border-radius: 20px;
+    font-size: 14px; font-weight: 700; cursor: pointer; user-select: none;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  #coinBadge:active { transform: scale(0.96); }
+
+  .storeBox { max-width: 360px; }
+  .storeHeader { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .storeHeader h2 { font-size: 20px; }
+  .storeWallet {
+    display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.09);
+    border: 1px solid rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 20px; font-weight: 800; font-size: 15px;
+  }
+  .storeNote { font-size: 12px !important; opacity: 0.6 !important; }
+
+  .pkgBtn {
+    display: flex; align-items: center; gap: 12px; text-align: left; width: 100%; position: relative;
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px;
+    padding: 10px 14px; color: #fff; font-weight: 400;
+  }
+  .pkgIcon {
+    width: 38px; height: 38px; min-width: 38px; border-radius: 11px; display: flex; align-items: center;
+    justify-content: center; font-size: 19px;
+    background: linear-gradient(135deg, rgba(255,214,120,0.28), rgba(122,107,255,0.28));
+  }
+  .pkgInfo { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; }
+  .pkgBtn .pkgAmount { font-size: 15px; font-weight: 800; color: #fff; }
+  .pkgBtn .pkgPrice {
+    font-size: 11px; font-weight: 700; opacity: 0.9; color: #fff; align-self: flex-start;
+    background: rgba(0,0,0,0.28); padding: 2px 8px; border-radius: 7px;
+  }
+  .pkgBtn.best { border-color: rgba(255,107,214,0.5); box-shadow: 0 0 0 1px rgba(255,107,214,0.25); }
+  .pkgBtn.best::after {
+    content: 'En avantajlı'; position: absolute; top: -9px; right: 10px;
+    background: #ff6bd6; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 8px;
+  }
+  .pkgBtn.equipped { background: rgba(127,232,160,0.18); border-color: #7fe8a0; }
+  .pkgBtn.equipped .pkgPrice { background: #7fe8a0; color: #0a3d1f; }
+  #storeMsg { color: #7fe8a0; font-size: 13px; min-height: 16px; }
+
+  .storeTabs { display: flex; gap: 4px; background: rgba(255,255,255,0.06); border-radius: 12px; padding: 4px; }
+  .tabBtn { flex: 1; padding: 8px 10px; font-size: 13px; background: transparent; color: #fff; border-radius: 9px; }
+  .tabBtn.activeTab { background: #ffb63b; color: #4a2c00; box-shadow: 0 2px 8px rgba(0,0,0,0.25); }
+  #cosmeticsList { display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto; padding-right: 2px; }
+
+  #soloChoices, #soloResolved { display: flex; flex-direction: column; gap: 8px; }
+</style>
+</head>
+<body>
+
+<div id="menu" class="screen active">
+  <div class="menuHeader">
+    <div class="menuLogo">🧩</div>
+    <h1>Blok Yarışı</h1>
+    <p class="hint">Rakibinle aynı taşları alırsın.<br>Kim daha çok puan yaparsa o kazanır!</p>
+  </div>
+
+  <div class="profileCard">
+    <input id="nameInput" maxlength="20" placeholder="Adın">
+    <div class="profileStats">
+      <span id="menuHighScore">🏆 Rekor: 0</span>
+      <span id="accountStatus">👤 Misafir</span>
+    </div>
+    <div class="utilityRow">
+      <button id="openAuthBtn" class="utilityBtn">🔐 Giriş / Kayıt</button>
+      <button id="openFriendsBtn" class="utilityBtn">👥 Arkadaşlar</button>
+    </div>
+  </div>
+
+  <button id="openDailyBtn" class="dailyBtn">🎡 Bonus Çark<span class="dailyDot" id="dailyDot"></span></button>
+  <button id="inviteFriendBtn" class="inviteBtn">📨 Arkadaşını Davet Et<span class="inviteBadge">+100 Coin</span></button>
+
+  <div class="modeGrid">
+    <button id="soloBtn" class="modeBtn modeBtnSolo">
+      <span class="modeIcon">🧍</span>
+      <span class="modeTitle">Tek Kişilik</span>
+      <span class="modeSub">Sınırsız oyna, rekorunu kır</span>
+    </button>
+    <button id="multiBtn" class="modeBtn modeBtnMulti">
+      <span class="modeIcon">⚔️</span>
+      <span class="modeTitle">Rakip Bul</span>
+      <span class="modeSub">Online, gerçek zamanlı eşleş</span>
+    </button>
+  </div>
+</div>
+
+<div id="friendsOverlay" class="screen-overlay">
+  <div class="stuckBox storeBox">
+    <h2>👥 Arkadaşlar</h2>
+    <div id="inviteBox" style="display:none;">
+      <p class="hint">📨 Arkadaşını davet kodunla davet et, üye olunca <b>+100 Coin</b> kazan!</p>
+      <div style="display:flex; gap:8px;">
+        <input id="myInviteCode" readonly style="flex:1; width:auto;">
+        <button id="copyInviteBtn" style="padding:10px 16px;">Kopyala</button>
+      </div>
+    </div>
+    <p id="inviteGuestHint" class="hint" style="display:none;">Kendi davet kodunu almak için önce üye ol.</p>
+    <div style="display:flex; gap:8px;">
+      <input id="friendUserInput" maxlength="20" placeholder="Kullanıcı adı" style="flex:1; width:auto;">
+      <button id="addFriendBtn" style="padding:10px 16px;">Ekle</button>
+    </div>
+    <p id="friendsError"></p>
+    <div id="friendRequestsList"></div>
+    <div id="friendsList"></div>
+    <button id="closeFriendsBtn" class="secondary">Kapat</button>
+  </div>
+</div>
+
+<div id="challengeOverlay" class="screen-overlay">
+  <div class="stuckBox">
+    <h2>⚔️ Meydan Okuma!</h2>
+    <p id="challengeFromText"></p>
+    <button id="acceptChallengeBtn">Kabul Et</button>
+    <button id="declineChallengeBtn" class="secondary">Reddet</button>
+  </div>
+</div>
+
+<div id="dailyOverlay" class="screen-overlay">
+  <div class="stuckBox">
+    <h2>🎡 Bonus Çark</h2>
+    <p id="dailyStreakText">Seri: 1. gün</p>
+    <div class="wheelWrap">
+      <div class="wheelPointer"></div>
+      <div class="wheel" id="wheelEl"></div>
+    </div>
+    <p id="dailyResultText"></p>
+    <button id="spinWheelBtn">Çarkı Çevir</button>
+    <button id="dailyAdBtn" style="display:none;">🎬 Reklamla x2 Yap</button>
+    <button id="dailyCloseBtn" class="secondary">Kapat</button>
+  </div>
+</div>
+
+<div id="loginRewardOverlay" class="screen-overlay">
+  <div class="stuckBox">
+    <h2>🎁 Günlük Ödül</h2>
+    <p id="loginRewardAmountText" style="font-size:19px; font-weight:800;"></p>
+    <p id="loginRewardWeeklyText" style="display:none; color:#ffd24d; font-weight:700;"></p>
+    <p id="loginRewardStreakText" style="opacity:0.85;"></p>
+    <button id="loginRewardAdBtn" style="display:none;">🎬 Reklam İzle (+40 Coin)</button>
+    <button id="loginRewardCloseBtn">Tamam</button>
+  </div>
+</div>
+
+<div id="authOverlay" class="screen-overlay">
+  <div class="stuckBox">
+    <h2>🔐 Hesap</h2>
+    <p class="hint">Kayıt olursan mevcut Coin/rekor/kozmetiklerin hesabına bağlanır ve başka bir cihazdan girince de seni bekler.</p>
+    <input id="authUser" maxlength="20" placeholder="Kullanıcı adı (3-20, harf/rakam/_)">
+    <input id="authPass" type="password" maxlength="40" placeholder="Şifre (en az 4 karakter)">
+    <input id="authRefCode" maxlength="20" placeholder="Davet kodu (opsiyonel)">
+    <p id="authError"></p>
+    <button id="authLoginBtn">Giriş Yap</button>
+    <button id="authRegisterBtn">Kayıt Ol</button>
+    <button id="authCloseBtn" class="secondary">Misafir olarak oyna</button>
+  </div>
+</div>
+
+<div id="waiting" class="screen">
+  <h1>🔎</h1>
+  <p>Rakip aranıyor...</p>
+  <p class="hint">Bir arkadaşın da bu sayfayı açarsa eşleşirsiniz.</p>
+</div>
+
+<div id="game" class="screen">
+  <div id="topbar">
+    <div class="scorebox"><div class="name" id="myName">Sen</div><div class="pts" id="myScore">0</div></div>
+    <div id="oppMini"></div>
+    <div class="scorebox"><div class="name" id="oppName">Rakip</div><div class="pts" id="oppScore">0</div><div id="oppStreak"></div></div>
+  </div>
+  <div id="moveTimerBadge"></div>
+  <div id="board"></div>
+  <div id="tray"></div>
+</div>
+
+<div id="overlay">
+  <div id="confetti"></div>
+  <div id="overlayTitle"></div>
+  <div id="overlayInfo"></div>
+  <button id="againBtn">Tekrar Oyna</button>
+</div>
+
+<div id="oppBanner"></div>
+<div id="streakBanner"></div>
+
+<div id="stuckOverlay" class="screen-overlay">
+  <div class="stuckBox">
+    <h2>Hamlen kalmadı!</h2>
+    <p>Puanın: <span id="stuckScore">0</span></p>
+    <p>Blok Coin: <span id="stuckCoins">0</span> 🪙</p>
+    <p id="stuckTimerLine">⏱ Kalan süre: <span id="stuckTimer">30s</span></p>
+    <button id="continueCoinBtn">100 Blok Coin ile devam et</button>
+    <button id="continueAdBtn">🎬 Reklam izleyerek devam et</button>
+    <button id="giveUpBtn" class="secondary">Pes et</button>
+    <p id="stuckError"></p>
+  </div>
+</div>
+
+<div id="soloOverlay" class="screen-overlay">
+  <div class="stuckBox">
+    <h2 id="soloTitle">OYUN BİTTİ!</h2>
+    <p>Mevcut Skor: <span id="soloScore">0</span></p>
+    <p>Rekor: <span id="soloHigh">0</span></p>
+    <div id="soloChoices">
+      <button id="soloAdBonusBtn">🎬 Reklam İzle → Skorunu <span id="soloBonusPreview">0</span> Yap (x1,5)</button>
+      <button id="soloAdContinueBtn">❤️ Reklam İzle → Oyuna Devam Et</button>
+      <button id="soloCoinContinueBtn">🪙 100 Coin → Oyuna Devam Et</button>
+      <button id="soloEndBtn" class="secondary">Oyunu Bitir</button>
+    </div>
+    <div id="soloResolved" style="display:none">
+      <p id="soloResolvedMsg"></p>
+      <button id="soloAgainBtn">Tekrar Oyna</button>
+      <button id="soloMenuBtn" class="secondary">Ana Menüye Dön</button>
+    </div>
+    <p id="soloError"></p>
+  </div>
+</div>
+
+<div id="adOverlay" class="screen-overlay">
+  <div class="stuckBox">
+    <h2>🎬 Reklam</h2>
+    <p id="adStatusText">Reklamı izlemek için başlat.</p>
+    <div id="adContainer"></div>
+    <video id="adContentVideo" style="display:none;" playsinline></video>
+    <button id="adStartBtn">▶️ Reklamı Başlat</button>
+    <button id="adCancelBtn" class="secondary">Vazgeç</button>
+  </div>
+</div>
+
+<div id="coinBadge"><span>🪙</span><span id="coinBadgeAmount">0</span></div>
+
+<div id="storeOverlay" class="screen-overlay">
+  <div class="stuckBox storeBox">
+    <div class="storeHeader">
+      <h2>Mağaza</h2>
+      <div class="storeWallet">🪙 <span id="storeCoins">0</span></div>
+    </div>
+    <div class="storeTabs">
+      <button id="storeTabCoinsBtn" class="tabBtn activeTab">Coin Paketleri</button>
+      <button id="storeTabCosmeticsBtn" class="tabBtn">Kozmetikler</button>
+    </div>
+    <div id="storePanelCoins">
+      <p class="storeNote">Test modu — gerçek ödeme alınmaz, bakiyeye anında eklenir.</p>
+      <button class="pkgBtn" data-pkg="p100"><span class="pkgIcon">🪙</span><span class="pkgInfo"><span class="pkgAmount">100 Blok Coin</span><span class="pkgPrice">0,50 € (test)</span></span></button>
+      <button class="pkgBtn" data-pkg="p250"><span class="pkgIcon">👛</span><span class="pkgInfo"><span class="pkgAmount">250 Blok Coin</span><span class="pkgPrice">0,99 € (test)</span></span></button>
+      <button class="pkgBtn" data-pkg="p600"><span class="pkgIcon">💰</span><span class="pkgInfo"><span class="pkgAmount">600 Blok Coin</span><span class="pkgPrice">1,99 € (test)</span></span></button>
+      <button class="pkgBtn" data-pkg="p1200"><span class="pkgIcon">📦</span><span class="pkgInfo"><span class="pkgAmount">1.200 Blok Coin</span><span class="pkgPrice">3,49 € (test)</span></span></button>
+      <button class="pkgBtn best" data-pkg="p2000"><span class="pkgIcon">👑</span><span class="pkgInfo"><span class="pkgAmount">2.000 Blok Coin</span><span class="pkgPrice">4,99 € (test)</span></span></button>
+    </div>
+    <div id="storePanelCosmetics" style="display:none">
+      <div id="cosmeticsList"></div>
+    </div>
+    <p id="storeMsg"></p>
+    <button id="closeStoreBtn" class="secondary">Kapat</button>
+  </div>
+</div>
+
+<div id="dragEl"></div>
+
+<!-- Google IMA SDK: gerçek, hesap gerektirmeyen test reklamları için (ücretsiz, Google'ın
+     herkese açık geliştirici test etiketi kullanılıyor). Gerçek bir yayıncı reklam birimine
+     geçmek için sadece AD_TAG_URL sabitini kendi reklam biriminizle değiştirmeniz yeterli. -->
+<script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+
+<script>
+// Web'de sayfa zaten sunucudan servis edildiği için konum (location.host) sunucunun
+// adresiyle aynıdır. Capacitor (mobil) paketinde ise sayfa yerel dosyadan açılır,
+// location.host sunucuyu göstermez — bu yüzden mobil pakette sabit bir adrese ihtiyaç var.
+// Gerçek domain hazır olunca SADECE bu satırı güncelle (ör. 'wss://api.blokyarisi.com').
+// DEMO DEĞERİ: Android emulator'den host makinenin localhost'una özel takma ad (10.0.2.2).
+// Gerçek yayında bunu kendi backend domaininle (ör. 'wss://api.blokyarisi.com') değiştir.
+const NATIVE_BACKEND_WS_URL = 'ws://10.0.2.2:3131';
+function backendWsUrl() {
+  if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+    return NATIVE_BACKEND_WS_URL;
+  }
+  return (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host;
+}
+
+const N = 8;
+const SOLO_BONUS_MULTIPLIER = 1.5;
+// Not: taş şekilleri artık burada üretilmiyor — sunucu (gameLogic.js) her taşı
+// {shape,color,used} olarak zaten hazır gönderiyor, istemci sadece render ediyor.
+
+const COSMETIC_CATALOG = [
+  { id: 'skin_neon', name: 'Neon Blok', price: 200, cat: 'skin', icon: '🟣', swatch: 'linear-gradient(135deg,#ff2d78,#00e5ff)' },
+  { id: 'skin_gold', name: 'Altın Blok', price: 400, cat: 'skin', icon: '🟡', swatch: 'linear-gradient(135deg,#f5c542,#b8860b)' },
+  { id: 'skin_ice', name: 'Buz Blok', price: 350, cat: 'skin', icon: '🔵', swatch: 'linear-gradient(135deg,#a8e6ff,#5bc8ff)' },
+  { id: 'skin_galaxy', name: 'Galaksi Blok', price: 600, cat: 'skin', icon: '🟣', swatch: 'linear-gradient(135deg,#8a2be2,#4b0082)' },
+  { id: 'skin_fire', name: 'Ateş Blok', price: 500, cat: 'skin', icon: '🔴', swatch: 'linear-gradient(135deg,#ff6f00,#d50000)' },
+  { id: 'skin_legend', name: 'Efsanevi Blok', price: 1000, cat: 'skin', icon: '✨', swatch: 'linear-gradient(135deg,#ffd700,#ff00ff)' },
+  { id: 'frame_classic', name: 'Profil Çerçevesi', price: 150, cat: 'frame', icon: '🖼️', swatch: 'linear-gradient(135deg,#ffd76b,#ff8a65)' },
+  { id: 'victory_classic', name: 'Zafer Animasyonu', price: 300, cat: 'victory', icon: '🏆', swatch: 'linear-gradient(135deg,#ffd700,#ffa93b)' },
+  { id: 'theme_classic', name: 'Tahta Teması', price: 450, cat: 'theme', icon: '🎨', swatch: 'linear-gradient(135deg,#ffc850,#6e5adc)' },
+  { id: 'emoji_classic', name: 'Emoji Paketi', price: 200, cat: 'emoji', icon: '😄', swatch: 'linear-gradient(135deg,#ffb63b,#ff6bd6)' },
+];
+const STREAK_TEXT = { 2: 'DOUBLE!', 3: 'TRIPLE!', 4: 'SUPER STREAK!', 5: 'MEGA STREAK!' };
+// Yalnızca görsel — kazanan dilim ve miktarı sunucu belirler, buradaki dizi
+// sadece çarkın renklerini/etiketlerini doğru çizmek için kullanılır.
+const WHEEL_SEGMENTS = [50, 100, 75, 150, 100, 250, 75, 500];
+
+let ws, board, tray, score, streak, myOver;
+let opp = { score: 0, name: 'Rakip' };
+let cellSize = 42;
+let coins = 0, highScore = 0, highScoreBonus = 0;
+let inventory = [];
+let equipped = { skin: null, frame: null, victory: null, theme: null, emoji: null };
+let mode = 'multi'; // 'multi' | 'solo'
+let stuckActive = false;
+let stuckTimerInterval = null;
+let moveTimerInterval = null;
+let oppBannerTimeout = null;
+let streakBannerTimeout = null;
+
+function getPid() {
+  try {
+    let id = localStorage.getItem('bb_pid');
+    if (!id) {
+      id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ('p_' + Math.random().toString(36).slice(2) + Date.now().toString(36));
+      localStorage.setItem('bb_pid', id);
+    }
+    return id;
+  } catch {
+    return 'p_' + Math.random().toString(36).slice(2);
+  }
+}
+const PID = getPid();
+
+function getToken() {
+  try { return localStorage.getItem('bb_token') || null; } catch { return null; }
+}
+function setToken(t) {
+  try { if (t) localStorage.setItem('bb_token', t); else localStorage.removeItem('bb_token'); } catch {}
+}
+let authToken = getToken();
+let username = null;
+let canSpinToday = false;
+let dailyStreakDisplay = 0;
+let wheelRotation = 0;
+
+const $ = (id) => document.getElementById(id);
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+}
+
+// --- setup DOM ---
+const boardEl = $('board');
+for (let i = 0; i < N * N; i++) boardEl.appendChild(document.createElement('div'));
+const miniEl = $('oppMini');
+for (let i = 0; i < N * N; i++) miniEl.appendChild(document.createElement('div'));
+const cells = [...boardEl.children];
+const miniCells = [...miniEl.children];
+
+function fitBoard() {
+  const s = Math.min(46, Math.floor((Math.min(innerWidth, 420) - 60) / N));
+  cellSize = s;
+  document.documentElement.style.setProperty('--cell', s + 'px');
+}
+fitBoard();
+addEventListener('resize', fitBoard);
+
+// --- networking ---
+function connect() {
+  ws = new WebSocket(backendWsUrl());
+  ws.onopen = () => {
+    if (authToken) ws.send(JSON.stringify({ t: 'authResume', token: authToken }));
+    else ws.send(JSON.stringify({ t: 'hello', pid: PID }));
+  };
+  ws.onmessage = (e) => {
+    const m = JSON.parse(e.data);
+    if (m.t === 'queued') show('waiting');
+    else if (m.t === 'start') startGame({ board: m.board, tray: m.tray, score: m.score }, m.opp, m.coins);
+    else if (m.t === 'placed') applyPlaced(m);
+    else if (m.t === 'placeRejected') { /* sunucu otoritesi reddetti (ör. gecikmiş/çift gönderim) — sessizce yok say */ }
+    else if (m.t === 'opp') {
+      opp.score = m.score;
+      $('oppScore').textContent = m.score;
+      if (m.board) m.board.forEach((v, i) => miniCells[i].className = v ? 'c' + v : '');
+      updateOppStreakBadge(m.streak || 0);
+    }
+    else if (m.t === 'oppStuck') showOppBanner('Rakibin elendi! Devam edip etmeyeceğine karar veriyor...');
+    else if (m.t === 'oppContinued') {
+      if (m.method === 'ad') showOppBanner('Rakibin reklam izleyerek oyuna geri döndü! 🎬');
+      else showOppBanner(`Rakibin ${m.amount} Blok Coin harcayarak oyuna geri döndü! 🪙`);
+    }
+    else if (m.t === 'moveTimer') startMoveCountdown(m.deadline);
+    else if (m.t === 'stuckOptions') showStuckScreen(m);
+    else if (m.t === 'continueOk') applyContinue(m);
+    else if (m.t === 'continueDenied') handleContinueDenied(m);
+    else if (m.t === 'adStart') showAdOverlay(
+      () => ws.send(JSON.stringify({ t: 'adComplete' })),
+      () => ws.send(JSON.stringify({ t: 'adFailed' }))
+    );
+    else if (m.t === 'matchOver') showMatchOver(m);
+    else if (m.t === 'profile') {
+      coins = m.coins; highScore = m.highScore; highScoreBonus = m.highScoreBonus;
+      inventory = m.inventory; equipped = m.equipped;
+      updateCoinBadge();
+      applyCosmetics();
+      updateMenuHighScore();
+    }
+    else if (m.t === 'loginReward') {
+      coins = m.coins; updateCoinBadge();
+      $('loginRewardAmountText').textContent = `+${m.amount} Blok Coin kazandın!`;
+      $('loginRewardStreakText').textContent = `Seri: ${m.streak}. gün`;
+      if (m.weeklyBonus > 0) {
+        $('loginRewardWeeklyText').textContent = `🎉 7 gün üst üste giriş bonusu: +${m.weeklyBonus} Coin!`;
+        $('loginRewardWeeklyText').style.display = 'block';
+      } else {
+        $('loginRewardWeeklyText').style.display = 'none';
+      }
+      $('loginRewardAdBtn').style.display = '';
+      $('loginRewardAdBtn').disabled = false;
+      $('loginRewardAdBtn').textContent = `🎬 Reklam İzle (+${m.adBonus} Coin)`;
+      $('loginRewardOverlay').classList.add('active');
+    }
+    else if (m.t === 'loginAdStart') showAdOverlay(
+      () => ws.send(JSON.stringify({ t: 'loginAdComplete' })),
+      () => ws.send(JSON.stringify({ t: 'loginAdFailed' }))
+    );
+    else if (m.t === 'loginAdDoubled') {
+      coins = m.coins; updateCoinBadge();
+      $('loginRewardAmountText').textContent = `+${m.added} Blok Coin daha kazandın! 🎉`;
+      $('loginRewardAdBtn').style.display = 'none';
+    }
+    else if (m.t === 'loginAdDenied') {
+      $('loginRewardAdBtn').disabled = false;
+    }
+    else if (m.t === 'dailyStatus') {
+      canSpinToday = m.canSpin;
+      dailyStreakDisplay = m.streak;
+      $('dailyDot').style.display = canSpinToday ? 'block' : 'none';
+    }
+    else if (m.t === 'spinResult') {
+      spinWheelTo(m.segmentIndex);
+      dailyStreakDisplay = m.streak;
+      $('dailyStreakText').textContent = `Seri: ${m.streak}. gün`;
+      coins = m.coins; updateCoinBadge();
+      canSpinToday = false;
+      $('dailyDot').style.display = 'none';
+      setTimeout(() => {
+        $('dailyResultText').textContent = `🎉 ${m.amount} Blok Coin kazandın!`;
+        $('dailyAdBtn').style.display = '';
+        $('spinWheelBtn').style.display = 'none';
+      }, 3100);
+    }
+    else if (m.t === 'spinDenied') {
+      $('dailyResultText').textContent = 'Bugünkü bonus çevirmeni zaten yaptın, yarın tekrar gel!';
+      $('spinWheelBtn').style.display = 'none';
+    }
+    else if (m.t === 'dailyAdStart') showAdOverlay(
+      () => ws.send(JSON.stringify({ t: 'dailyAdComplete' })),
+      () => ws.send(JSON.stringify({ t: 'dailyAdFailed' }))
+    );
+    else if (m.t === 'dailyAdDoubled') {
+      coins = m.coins; updateCoinBadge();
+      $('dailyResultText').textContent = `🎉 Reklamla ikiye katladın! +${m.added} Blok Coin daha.`;
+      $('dailyAdBtn').style.display = 'none';
+    }
+    else if (m.t === 'dailyAdDenied') {
+      $('dailyResultText').textContent = m.reason === 'used' ? 'Bu ödülü zaten ikiye katladın.' : '';
+    }
+    else if (m.t === 'coinsUpdated') {
+      coins = m.coins;
+      updateCoinBadge();
+      const el = $('storeMsg');
+      el.textContent = m.real ? `✅ Ödeme alındı — +${m.added} Blok Coin eklendi!` : `+${m.added} Blok Coin eklendi!`;
+      setTimeout(() => { el.textContent = ''; }, 4000);
+    }
+    else if (m.t === 'checkoutUrl') {
+      window.location.href = m.url; // Stripe'ın gerçek (test modu) ödeme sayfasına yönlendirir
+    }
+    else if (m.t === 'checkoutError') {
+      $('storeMsg').textContent = m.message || 'Ödeme işlenemedi.';
+    }
+    else if (m.t === 'cosmeticBought') {
+      coins = m.coins; inventory = m.inventory; equipped = m.equipped;
+      updateCoinBadge(); applyCosmetics();
+      $('storeMsg').textContent = 'Satın alındı ve kullanılıyor!';
+      setTimeout(() => { $('storeMsg').textContent = ''; }, 2000);
+    }
+    else if (m.t === 'purchaseDenied') {
+      $('storeMsg').textContent = m.reason === 'coins' ? 'Yetersiz Blok Coin.' : 'Bu ürüne zaten sahipsin.';
+    }
+    else if (m.t === 'equipped') {
+      equipped[m.cat] = m.id;
+      applyCosmetics();
+    }
+    else if (m.t === 'soloStarted') startGame({ board: m.board, tray: m.tray, score: m.score }, null, coins);
+    else if (m.t === 'soloPlaced') applyPlaced(m);
+    else if (m.t === 'soloStuckOptions') showSoloStuck(m);
+    else if (m.t === 'soloContinueOk') applyContinue(m);
+    else if (m.t === 'soloContinueDenied') handleSoloDenied(m);
+    else if (m.t === 'soloBonusOk') applySoloBonus(m);
+    else if (m.t === 'soloAdStart') showAdOverlay(
+      () => ws.send(JSON.stringify({ t: 'soloAdComplete', purpose: m.purpose })),
+      () => ws.send(JSON.stringify({ t: 'soloAdFailed' }))
+    );
+    else if (m.t === 'soloFinal') showSoloFinal(m);
+    else if (m.t === 'authOk') {
+      username = m.username || null;
+      if (m.token) { authToken = m.token; setToken(authToken); }
+      updateAccountStatus();
+      $('authOverlay').classList.remove('active');
+      $('authUser').value = ''; $('authPass').value = ''; $('authRefCode').value = ''; $('authError').textContent = '';
+    }
+    else if (m.t === 'authError') {
+      const reasons = {
+        'invalid-username': 'Kullanıcı adı 3-20 karakter, sadece harf/rakam/_ olmalı.',
+        'invalid-password': 'Şifre en az 4 karakter olmalı.',
+        taken: 'Bu kullanıcı adı alınmış.',
+        'not-found': 'Böyle bir kullanıcı yok.',
+        'wrong-password': 'Şifre yanlış.',
+      };
+      $('authError').textContent = reasons[m.reason] || 'İşlem tamamlanamadı.';
+    }
+    else if (m.t === 'authExpired') {
+      authToken = null; setToken(null);
+      ws.send(JSON.stringify({ t: 'hello', pid: PID })); // oturum geçersiz -> misafir olarak devam et
+    }
+    else if (m.t === 'loggedOut') {
+      username = null; authToken = null; setToken(null);
+      updateAccountStatus();
+      ws.send(JSON.stringify({ t: 'hello', pid: PID }));
+    }
+    else if (m.t === 'referralReward') {
+      coins = m.coins; updateCoinBadge();
+      showOppBanner(`🎉 ${m.friend} davetinle üye oldu! +${m.amount} Blok Coin kazandın!`);
+    }
+    else if (m.t === 'friendsList') renderFriends(m);
+    else if (m.t === 'friendError') {
+      const reasons = {
+        needLogin: 'Önce giriş yapmalısın.',
+        'not-found': 'Böyle bir kullanıcı yok.',
+        self: 'Kendini ekleyemezsin.',
+        already: 'Zaten arkadaşsınız.',
+      };
+      $('friendsError').textContent = reasons[m.reason] || 'İşlem tamamlanamadı.';
+    }
+    else if (m.t === 'friendRequestSent') {
+      $('friendsError').textContent = '';
+      showOppBanner(`${m.username} kullanıcısına arkadaşlık isteği gönderildi.`);
+    }
+    else if (m.t === 'friendRequestReceived') {
+      showOppBanner(`${m.username} sana arkadaşlık isteği gönderdi! Arkadaşlar panelinden onaylayabilirsin.`);
+    }
+    else if (m.t === 'friendAccepted') {
+      showOppBanner(`${m.username} arkadaşlık isteğini kabul etti! 🎉`);
+    }
+    else if (m.t === 'challengeSent') {
+      showOppBanner(`${m.username} kullanıcısına meydan okuman gönderildi, bekleniyor...`);
+    }
+    else if (m.t === 'challengeError') {
+      const reasons = {
+        'not-friend': 'Bu kişi arkadaş listende değil.',
+        offline: 'Bu arkadaşın şu an çevrimdışı.',
+        busy: 'Bu arkadaş şu an başka bir maçta.',
+        'you-busy': 'Zaten bir maçtasın.',
+      };
+      $('friendsError').textContent = reasons[m.reason] || 'Meydan okuma gönderilemedi.';
+    }
+    else if (m.t === 'challengeReceived') {
+      $('challengeFromText').textContent = `${m.username} seni meydan okudu!`;
+      $('challengeOverlay').classList.add('active');
+    }
+    else if (m.t === 'challengeDeclined') {
+      showOppBanner(`${m.username} meydan okumanı reddetti.`);
+    }
+  };
+  ws.onclose = () => setTimeout(connect, 1000);
+}
+connect();
+
+function join() {
+  mode = 'multi';
+  document.body.classList.remove('mode-solo');
+  const name = $('nameInput').value.trim() || 'Oyuncu' + Math.floor(Math.random() * 1000);
+  $('nameInput').value = name;
+  ws.send(JSON.stringify({ t: 'join', name }));
+}
+$('multiBtn').onclick = join;
+$('soloBtn').onclick = () => {
+  mode = 'solo';
+  document.body.classList.add('mode-solo');
+  const name = $('nameInput').value.trim() || 'Oyuncu' + Math.floor(Math.random() * 1000);
+  $('nameInput').value = name;
+  ws.send(JSON.stringify({ t: 'soloStart' }));
+};
+$('againBtn').onclick = () => { $('overlay').classList.remove('active'); join(); };
+$('continueCoinBtn').onclick = () => ws.send(JSON.stringify({ t: 'continueCoin' }));
+$('continueAdBtn').onclick = () => ws.send(JSON.stringify({ t: 'watchAd' }));
+$('giveUpBtn').onclick = () => ws.send(JSON.stringify({ t: 'giveUp' }));
+
+// --- Blok Coin rozeti + mağaza ---
+function updateCoinBadge() {
+  $('coinBadgeAmount').textContent = coins;
+  $('storeCoins').textContent = coins;
+}
+function updateMenuHighScore() {
+  $('menuHighScore').textContent = `🏆 ${highScore}` + (highScoreBonus > highScore ? ` (bonus: ${highScoreBonus})` : '');
+}
+
+function updateAccountStatus() {
+  const el = $('accountStatus');
+  if (username) {
+    el.textContent = `👤 ${username}`;
+    $('openAuthBtn').textContent = '🚪 Çıkış Yap';
+  } else {
+    el.textContent = '👤 Misafir';
+    $('openAuthBtn').textContent = '🔐 Giriş / Kayıt';
+  }
+}
+updateAccountStatus();
+
+$('openAuthBtn').onclick = () => {
+  if (username) {
+    ws.send(JSON.stringify({ t: 'logout' }));
+  } else {
+    $('authError').textContent = '';
+    $('authOverlay').classList.add('active');
+  }
+};
+$('authCloseBtn').onclick = () => $('authOverlay').classList.remove('active');
+$('authLoginBtn').onclick = () => {
+  const u = $('authUser').value.trim(), p = $('authPass').value;
+  ws.send(JSON.stringify({ t: 'login', username: u, password: p }));
+};
+$('authRegisterBtn').onclick = () => {
+  const u = $('authUser').value.trim(), p = $('authPass').value;
+  const ref = $('authRefCode').value.trim();
+  ws.send(JSON.stringify({ t: 'register', username: u, password: p, refCode: ref }));
+};
+
+// --- arkadaşlar + meydan okuma ---
+function openFriendsOverlay() {
+  if (!username) {
+    $('authError').textContent = 'Arkadaş davet etmek/eklemek için önce giriş yapmalısın.';
+    $('authOverlay').classList.add('active');
+    return;
+  }
+  ws.send(JSON.stringify({ t: 'getFriends' }));
+  $('friendsError').textContent = '';
+  $('myInviteCode').value = username;
+  $('inviteBox').style.display = 'block';
+  $('inviteGuestHint').style.display = 'none';
+  $('friendsOverlay').classList.add('active');
+}
+$('openFriendsBtn').onclick = openFriendsOverlay;
+$('inviteFriendBtn').onclick = openFriendsOverlay;
+$('copyInviteBtn').onclick = () => {
+  const input = $('myInviteCode');
+  input.select();
+  try {
+    navigator.clipboard.writeText(input.value).then(() => {
+      $('copyInviteBtn').textContent = 'Kopyalandı!';
+      setTimeout(() => { $('copyInviteBtn').textContent = 'Kopyala'; }, 1500);
+    });
+  } catch {}
+};
+$('closeFriendsBtn').onclick = () => $('friendsOverlay').classList.remove('active');
+$('addFriendBtn').onclick = () => {
+  const u = $('friendUserInput').value.trim();
+  if (!u) return;
+  ws.send(JSON.stringify({ t: 'addFriend', username: u }));
+  $('friendUserInput').value = '';
+};
+
+// --- günlük ödül çarkı ---
+function buildWheel() {
+  const wheel = $('wheelEl');
+  wheel.innerHTML = '';
+  const n = WHEEL_SEGMENTS.length;
+  const seg = 360 / n;
+  const colorVars = ['--c1', '--c2', '--c3', '--c4', '--c5', '--c6', '--c7', '--c8'];
+  const rootStyle = getComputedStyle(document.documentElement);
+  const parts = WHEEL_SEGMENTS.map((_, i) => {
+    const col = rootStyle.getPropertyValue(colorVars[i % colorVars.length]).trim();
+    return `${col} ${i * seg}deg ${(i + 1) * seg}deg`;
+  });
+  wheel.style.background = `conic-gradient(${parts.join(',')})`;
+  WHEEL_SEGMENTS.forEach((val, i) => {
+    const label = document.createElement('div');
+    label.className = 'wheelLabel';
+    label.style.transform = `rotate(${i * seg + seg / 2}deg)`;
+    label.innerHTML = `<span>${val}</span>`;
+    wheel.appendChild(label);
+  });
+}
+buildWheel();
+
+function spinWheelTo(idx) {
+  const n = WHEEL_SEGMENTS.length;
+  const seg = 360 / n;
+  const centerAngle = idx * seg + seg / 2;
+  const targetMod = (360 - centerAngle) % 360;
+  const currentMod = ((wheelRotation % 360) + 360) % 360;
+  let delta = targetMod - currentMod;
+  if (delta <= 0) delta += 360;
+  wheelRotation += delta + 5 * 360;
+  $('wheelEl').style.transform = `rotate(${wheelRotation}deg)`;
+}
+
+$('openDailyBtn').onclick = () => {
+  $('dailyResultText').textContent = '';
+  $('dailyAdBtn').style.display = 'none';
+  $('dailyStreakText').textContent = `Seri: ${dailyStreakDisplay || 0}. gün`;
+  $('spinWheelBtn').style.display = canSpinToday ? '' : 'none';
+  if (!canSpinToday) $('dailyResultText').textContent = 'Bugünkü bonus çevirmeni zaten yaptın, yarın tekrar gel!';
+  $('dailyOverlay').classList.add('active');
+};
+$('dailyCloseBtn').onclick = () => $('dailyOverlay').classList.remove('active');
+$('spinWheelBtn').onclick = () => {
+  $('spinWheelBtn').disabled = true;
+  ws.send(JSON.stringify({ t: 'spinWheel' }));
+  setTimeout(() => { $('spinWheelBtn').disabled = false; }, 3500);
+};
+$('dailyAdBtn').onclick = () => ws.send(JSON.stringify({ t: 'watchDailyAd' }));
+
+$('loginRewardCloseBtn').onclick = () => $('loginRewardOverlay').classList.remove('active');
+$('loginRewardAdBtn').onclick = () => ws.send(JSON.stringify({ t: 'watchLoginAd' }));
+
+function renderFriends(m) {
+  const reqWrap = $('friendRequestsList');
+  reqWrap.innerHTML = '';
+  (m.requests || []).forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'friendRow';
+    row.innerHTML = `<span class="fName">${r.username} istek gönderdi</span>`;
+    const actions = document.createElement('div');
+    actions.className = 'fActions';
+    const accept = document.createElement('button');
+    accept.textContent = '✓ Kabul Et';
+    accept.onclick = () => ws.send(JSON.stringify({ t: 'acceptFriend', username: r.username }));
+    const decline = document.createElement('button');
+    decline.textContent = '✕'; decline.className = 'secondary';
+    decline.onclick = () => ws.send(JSON.stringify({ t: 'declineFriend', username: r.username }));
+    actions.appendChild(accept); actions.appendChild(decline);
+    row.appendChild(actions);
+    reqWrap.appendChild(row);
+  });
+
+  const wrap = $('friendsList');
+  wrap.innerHTML = '';
+  (m.friends || []).forEach(f => {
+    const row = document.createElement('div');
+    row.className = 'friendRow';
+    row.innerHTML = `<span class="fName">${f.online ? '🟢' : '⚪'} ${f.username}</span>`;
+    const actions = document.createElement('div');
+    actions.className = 'fActions';
+    const challengeBtn = document.createElement('button');
+    challengeBtn.textContent = 'Meydan Oku';
+    challengeBtn.disabled = !f.online;
+    challengeBtn.onclick = () => ws.send(JSON.stringify({ t: 'challengeFriend', username: f.username }));
+    const removeBtn = document.createElement('button');
+    removeBtn.textContent = '✕'; removeBtn.className = 'secondary';
+    removeBtn.onclick = () => ws.send(JSON.stringify({ t: 'removeFriend', username: f.username }));
+    actions.appendChild(challengeBtn); actions.appendChild(removeBtn);
+    row.appendChild(actions);
+    wrap.appendChild(row);
+  });
+}
+
+$('acceptChallengeBtn').onclick = () => {
+  $('challengeOverlay').classList.remove('active');
+  mode = 'multi';
+  document.body.classList.remove('mode-solo');
+  ws.send(JSON.stringify({ t: 'acceptChallenge' }));
+};
+$('declineChallengeBtn').onclick = () => {
+  $('challengeOverlay').classList.remove('active');
+  ws.send(JSON.stringify({ t: 'declineChallenge' }));
+};
+$('coinBadge').onclick = () => {
+  $('storeCoins').textContent = coins;
+  $('storeMsg').textContent = '';
+  $('storeOverlay').classList.add('active');
+};
+$('closeStoreBtn').onclick = () => $('storeOverlay').classList.remove('active');
+document.querySelectorAll('.pkgBtn[data-pkg]').forEach(btn => {
+  btn.onclick = () => {
+    $('storeMsg').textContent = 'Ödeme sayfasına yönlendiriliyor...';
+    ws.send(JSON.stringify({ t: 'createCheckout', package: btn.dataset.pkg }));
+  };
+});
+
+// Stripe Checkout'tan geri dönüş: URL'deki session_id sunucuda doğrulanıp
+// (gerçek ödeme onaylıysa) coin ekleniyor. İstemci miktara hiç karar vermiyor.
+(function handleCheckoutReturn() {
+  const params = new URLSearchParams(location.search);
+  const status = params.get('checkout');
+  if (!status) return;
+  history.replaceState(null, '', location.pathname);
+  if (status === 'success') {
+    const sessionId = params.get('session_id');
+    if (sessionId) {
+      const trySend = () => {
+        if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ t: 'confirmPurchase', sessionId }));
+        else setTimeout(trySend, 300);
+      };
+      trySend();
+    }
+  } else if (status === 'cancel') {
+    setTimeout(() => { $('storeMsg').textContent = 'Ödeme iptal edildi.'; }, 300);
+  }
+})();
+$('storeTabCoinsBtn').onclick = () => switchStoreTab('coins');
+$('storeTabCosmeticsBtn').onclick = () => switchStoreTab('cosmetics');
+function switchStoreTab(tab) {
+  $('storeTabCoinsBtn').classList.toggle('activeTab', tab === 'coins');
+  $('storeTabCosmeticsBtn').classList.toggle('activeTab', tab === 'cosmetics');
+  $('storePanelCoins').style.display = tab === 'coins' ? '' : 'none';
+  $('storePanelCosmetics').style.display = tab === 'cosmetics' ? '' : 'none';
+  if (tab === 'cosmetics') renderCosmeticsTab();
+}
+
+function renderCosmeticsTab() {
+  const wrap = $('cosmeticsList');
+  wrap.innerHTML = '';
+  COSMETIC_CATALOG.forEach(item => {
+    const owned = inventory.includes(item.id);
+    const isEquipped = owned && equipped[item.cat] === item.id;
+    const btn = document.createElement('button');
+    btn.className = 'pkgBtn' + (isEquipped ? ' equipped' : '');
+    const iconHtml = `<span class="pkgIcon" style="background:${item.swatch}">${item.icon}</span>`;
+    if (!owned) {
+      btn.innerHTML = `${iconHtml}<span class="pkgInfo"><span class="pkgAmount">${item.name}</span><span class="pkgPrice">${item.price} 🪙</span></span>`;
+      btn.onclick = () => ws.send(JSON.stringify({ t: 'buyCosmetic', id: item.id }));
+    } else if (isEquipped) {
+      btn.innerHTML = `${iconHtml}<span class="pkgInfo"><span class="pkgAmount">${item.name} ✓</span><span class="pkgPrice">Kaldır</span></span>`;
+      btn.onclick = () => ws.send(JSON.stringify({ t: 'unequipCosmetic', cat: item.cat }));
+    } else {
+      btn.innerHTML = `${iconHtml}<span class="pkgInfo"><span class="pkgAmount">${item.name}</span><span class="pkgPrice">Kullan</span></span>`;
+      btn.onclick = () => ws.send(JSON.stringify({ t: 'equipCosmetic', id: item.id }));
+    }
+    wrap.appendChild(btn);
+  });
+}
+
+function applyCosmetics() {
+  if (equipped.skin) document.body.setAttribute('data-skin', equipped.skin); else document.body.removeAttribute('data-skin');
+  if (equipped.theme) document.body.setAttribute('data-theme', equipped.theme); else document.body.removeAttribute('data-theme');
+  document.body.classList.toggle('has-frame', !!equipped.frame);
+  document.body.classList.toggle('has-emoji', !!equipped.emoji);
+  renderCosmeticsTab();
+  buildWheel(); // ekipli skin değiştiyse çarkın renkleri de güncellensin
+}
+
+function updateOppStreakBadge(level) {
+  const el = $('oppStreak');
+  if (level >= 2) { el.textContent = '🔥x' + level; el.style.display = 'block'; }
+  else el.style.display = 'none';
+}
+
+// --- game ---
+// state: sunucudan gelen {board, tray, score} ilk anlık görüntü. Tüm oyun mantığı
+// (taş üretimi, yerleştirme, skor, satır temizleme) artık sunucuda; istemci sadece
+// bu veriyi render eder ve kullanıcı niyetini ("şu taşı şuraya koy") sunucuya yollar.
+function startGame(state, oppName, startCoins) {
+  board = state.board;
+  tray = state.tray;
+  score = state.score;
+  streak = 0; myOver = false;
+  if (typeof startCoins === 'number') { coins = startCoins; updateCoinBadge(); }
+  stuckActive = false;
+  stopMoveCountdown();
+  $('myName').textContent = $('nameInput').value;
+  if (mode === 'solo') {
+    opp = { score: 0, name: '' };
+    $('oppName').textContent = 'Rekor';
+    $('oppScore').textContent = highScore;
+    $('oppStreak').style.display = 'none';
+  } else {
+    opp = { score: 0, name: oppName };
+    $('oppName').textContent = oppName;
+    $('oppScore').textContent = '0';
+  }
+  $('myScore').textContent = score;
+  miniCells.forEach(c => c.className = '');
+  $('overlay').classList.remove('active');
+  $('soloOverlay').classList.remove('active');
+  clearStuckUI();
+  render();
+  renderTray();
+  show('game');
+}
+
+function render() {
+  board.flat().forEach((v, i) => cells[i].className = v ? 'c' + v : '');
+}
+
+function renderTray() {
+  const trayEl = $('tray');
+  trayEl.innerHTML = '';
+  tray.forEach((p, idx) => {
+    const el = document.createElement('div');
+    el.className = 'traypiece' + (p.used ? ' used' : '');
+    const w = Math.max(...p.shape.map(c => c[1])) + 1;
+    el.style.gridTemplateColumns = `repeat(${w}, 18px)`;
+    const h = Math.max(...p.shape.map(c => c[0])) + 1;
+    for (let r = 0; r < h; r++) for (let c = 0; c < w; c++) {
+      const d = document.createElement('div');
+      if (p.shape.some(s => s[0] === r && s[1] === c)) d.className = 'c' + p.color;
+      else d.style.visibility = 'hidden';
+      el.appendChild(d);
+    }
+    el.dataset.idx = idx;
+    trayEl.appendChild(el);
+  });
+}
+
+function canPlace(shape, r0, c0) {
+  return shape.every(([r, c]) => {
+    const rr = r0 + r, cc = c0 + c;
+    return rr >= 0 && rr < N && cc >= 0 && cc < N && board[rr][cc] === 0;
+  });
+}
+function showStreakBanner(level) {
+  if (level < 2) return;
+  const el = $('streakBanner');
+  el.textContent = STREAK_TEXT[level] || STREAK_TEXT[5];
+  el.classList.remove('show', 'lvl5');
+  void el.offsetWidth; // CSS animasyonunu üst üste tetikler için reflow
+  el.classList.add('show');
+  if (level >= 5) el.classList.add('lvl5');
+  clearTimeout(streakBannerTimeout);
+  streakBannerTimeout = setTimeout(() => el.classList.remove('show'), 900);
+}
+
+// Yalnızca iyimser bir ön kontrol + sunucuya niyet gönderimi. Asıl yerleştirme,
+// skor, satır temizleme ve "hamlesiz kaldın mı" tespiti sunucuda (gameLogic.js)
+// yapılır; burada hesaplanan hiçbir şeye güvenilmez — gelen 'placed'/'soloPlaced'
+// cevabı görene kadar board/tray/score değişmez.
+function place(idx, r0, c0) {
+  const p = tray[idx];
+  if (!p || p.used || !canPlace(p.shape, r0, c0)) return false;
+  if (mode === 'solo') ws.send(JSON.stringify({ t: 'soloPlace', idx, row: r0, col: c0 }));
+  else ws.send(JSON.stringify({ t: 'place', idx, row: r0, col: c0 }));
+  return true;
+}
+window.debugPlace = place; // test icin — artık sonuç anlık değil, 'placed' mesajıyla asenkron gelir
+
+// Sunucudan gelen otoriter sonucu uygular: önce taş yerleşmiş-ama-henüz-
+// temizlenmemiş hali gösterir (orijinal animasyon zamanlamasını korumak için),
+// sonra 120ms sonra son (temizlenmiş) board/tray/score'u uygular.
+function applyPlaced(m) {
+  streak = m.streak;
+  board = m.preClearBoard;
+  render();
+  if (m.lines > 0) {
+    showStreakBanner(streak);
+    m.clearedIdx.forEach(i => cells[i].classList.add('flash'));
+    setTimeout(() => {
+      board = m.board;
+      tray = m.tray;
+      score = m.score;
+      $('myScore').textContent = score;
+      render();
+      renderTray();
+    }, 120);
+  } else {
+    board = m.board;
+    tray = m.tray;
+    score = m.score;
+    $('myScore').textContent = score;
+    renderTray();
+  }
+}
+
+// --- multiplayer: hamlesiz kalma / devam etme sistemi (sunucu tetikler) ---
+function showStuckScreen(m) {
+  stuckActive = true;
+  myOver = true; // karar verilene kadar kendi tahtan donar
+  stopMoveCountdown();
+  coins = m.coins;
+  updateCoinBadge();
+  $('stuckScore').textContent = score;
+  $('stuckCoins').textContent = coins;
+  $('continueCoinBtn').textContent = `${m.coinCost} Blok Coin ile devam et`;
+  $('continueCoinBtn').disabled = coins < m.coinCost;
+  $('continueAdBtn').style.display = m.adAvailable ? '' : 'none';
+  $('stuckError').textContent = '';
+  $('stuckOverlay').classList.add('active');
+  startStuckCountdown(m.deadline);
+}
+
+function startMoveCountdown(deadline) {
+  clearInterval(moveTimerInterval);
+  const el = $('moveTimerBadge');
+  el.style.display = 'block';
+  const tick = () => {
+    const left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+    el.textContent = `⏱ ${left}s`;
+    el.classList.toggle('danger', left <= 5);
+    el.classList.toggle('warn', left > 5 && left <= 10);
+    if (left <= 0) clearInterval(moveTimerInterval);
+  };
+  tick();
+  moveTimerInterval = setInterval(tick, 250);
+}
+function stopMoveCountdown() {
+  clearInterval(moveTimerInterval);
+  $('moveTimerBadge').style.display = 'none';
+}
+
+function startStuckCountdown(deadline) {
+  clearInterval(stuckTimerInterval);
+  const el = $('stuckTimer');
+  const tick = () => {
+    const left = Math.max(0, Math.ceil((deadline - Date.now()) / 1000));
+    el.textContent = left + 's';
+    el.classList.toggle('danger', left <= 5);
+    el.classList.toggle('warn', left > 5 && left <= 15);
+    if (left <= 0) clearInterval(stuckTimerInterval);
+  };
+  tick();
+  stuckTimerInterval = setInterval(tick, 250);
+}
+
+function handleContinueDenied(m) {
+  const el = $('stuckError');
+  if (m.reason === 'coins') {
+    if (typeof m.coins === 'number') { coins = m.coins; updateCoinBadge(); }
+    el.textContent = 'Yetersiz Blok Coin.';
+    $('continueCoinBtn').disabled = true;
+  } else if (m.reason === 'adUsed') {
+    el.textContent = 'Reklam hakkını zaten kullandın.';
+    $('continueAdBtn').style.display = 'none';
+  } else {
+    el.textContent = 'İşlem tamamlanamadı.';
+  }
+}
+
+// --- Gerçek ödüllü reklam: Web'de Google IMA SDK (herkese açık test etiketiyle),
+// native (Android/iOS) pakette ise gerçek AdMob SDK (@capacitor-community/admob).
+// Hesap/onay gerektirmez — Google'ın HERKESE AÇIK TEST reklam birimini kullanıyoruz.
+// Gerçek gelir için: AD_TAG_URL'yi kendi yayıncı reklam biriminizle (web), ve
+// NATIVE_REWARDED_AD_ID + AndroidManifest'teki APPLICATION_ID'yi kendi AdMob
+// hesabınızın gerçek kimlikleriyle değiştirin. ---
+const AD_TAG_URL = 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/21775744923/external/vmap_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ar%3Dpremidpostpod&cmsid=496&vid=short_onecue&correlator=';
+// Google'ın resmi herkese açık TEST ödüllü reklam birimi kimliği (Android).
+const NATIVE_REWARDED_AD_ID = 'ca-app-pub-3940256099942544/5224354917';
+
+let adDisplayContainer = null, adsLoader = null, adsManager = null;
+let currentAdDone = null, currentAdFail = null;
+
+function isNativeApp() {
+  return !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+}
+
+// --- native AdMob (yalnızca Capacitor paketinde çalışır) ---
+let nativeAdMobReady = false, nativeAdRewardEarned = false, nativeAdListenersAdded = false;
+if (isNativeApp() && window.Capacitor.Plugins && window.Capacitor.Plugins.AdMob) {
+  const AdMobPlugin = window.Capacitor.Plugins.AdMob;
+  AdMobPlugin.initialize({ initializeForTesting: true })
+    .then(() => {
+      nativeAdMobReady = true;
+      if (nativeAdListenersAdded) return;
+      nativeAdListenersAdded = true;
+      AdMobPlugin.addListener('onRewardedVideoAdReward', () => { nativeAdRewardEarned = true; });
+      AdMobPlugin.addListener('onRewardedVideoAdDismissed', () => {
+        const done = currentAdDone, fail = currentAdFail;
+        currentAdDone = null; currentAdFail = null;
+        if (nativeAdRewardEarned) { if (done) done(); }
+        else if (fail) fail();
+      });
+      AdMobPlugin.addListener('onRewardedVideoAdFailedToShow', () => {
+        const fail = currentAdFail; currentAdDone = null; currentAdFail = null;
+        if (fail) fail();
+      });
+    })
+    .catch(() => {});
+}
+
+async function showNativeRewardedAd() {
+  const AdMobPlugin = window.Capacitor.Plugins.AdMob;
+  nativeAdRewardEarned = false;
+  try {
+    await AdMobPlugin.prepareRewardVideoAd({ adId: NATIVE_REWARDED_AD_ID, isTesting: true });
+    await AdMobPlugin.showRewardVideoAd();
+    // Sonuç (ödül verilsin mi) yukarıdaki onRewardedVideoAdReward/Dismissed dinleyicilerinde karara bağlanır.
+  } catch (e) {
+    const fail = currentAdFail; currentAdDone = null; currentAdFail = null;
+    if (fail) fail();
+  }
+}
+
+function showAdOverlay(onDone, onFail) {
+  currentAdDone = onDone;
+  currentAdFail = onFail;
+  if (isNativeApp()) {
+    showNativeRewardedAd();
+    return;
+  }
+  $('adContainer').innerHTML = '';
+  $('adStatusText').textContent = 'Reklamı izlemek için başlat.';
+  $('adStartBtn').style.display = '';
+  $('adOverlay').classList.add('active');
+}
+
+function cleanupAds() {
+  if (adsManager) { try { adsManager.destroy(); } catch (e) {} adsManager = null; }
+}
+
+function failAd(message) {
+  cleanupAds();
+  $('adStatusText').textContent = `${message} Tekrar deneyebilir ya da vazgeçebilirsin.`;
+  $('adStartBtn').style.display = '';
+  const fail = currentAdFail; currentAdDone = null; currentAdFail = null;
+  if (fail) fail();
+}
+
+function onAdComplete() {
+  cleanupAds();
+  $('adOverlay').classList.remove('active');
+  const done = currentAdDone; currentAdDone = null; currentAdFail = null;
+  if (done) done();
+}
+
+function onAdsManagerLoaded(adsManagerLoadedEvent) {
+  adsManager = adsManagerLoadedEvent.getAdsManager($('adContentVideo'));
+  adsManager.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, () => failAd('Reklam oynatılamadı.'));
+  adsManager.addEventListener(google.ima.AdEvent.Type.COMPLETE, onAdComplete);
+  adsManager.addEventListener(google.ima.AdEvent.Type.SKIPPED, () => failAd('Reklam tamamlanmadan atlandı — ödül verilmedi.'));
+  try {
+    const box = $('adContainer');
+    adsManager.init(box.clientWidth || 300, box.clientHeight || 210, google.ima.ViewMode.NORMAL);
+    adsManager.start();
+    $('adStatusText').textContent = 'Reklam oynatılıyor...';
+  } catch (e) {
+    failAd('Reklam başlatılamadı.');
+  }
+}
+
+function startAdPlayback() {
+  if (!window.google || !google.ima) {
+    failAd('Reklam sistemi yüklenemedi (ağ bağlantısını kontrol et).');
+    return;
+  }
+  $('adStartBtn').style.display = 'none';
+  $('adStatusText').textContent = 'Reklam yükleniyor...';
+  try {
+    if (!adDisplayContainer) {
+      adDisplayContainer = new google.ima.AdDisplayContainer($('adContainer'), $('adContentVideo'));
+    }
+    adDisplayContainer.initialize();
+    if (!adsLoader) {
+      adsLoader = new google.ima.AdsLoader(adDisplayContainer);
+      adsLoader.addEventListener(google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED, onAdsManagerLoaded, false);
+      adsLoader.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, () => failAd('Reklam yüklenemedi.'), false);
+    }
+    const adsRequest = new google.ima.AdsRequest();
+    adsRequest.adTagUrl = AD_TAG_URL + Date.now();
+    const box = $('adContainer');
+    adsRequest.linearAdSlotWidth = box.clientWidth || 300;
+    adsRequest.linearAdSlotHeight = box.clientHeight || 210;
+    adsRequest.nonLinearAdSlotWidth = box.clientWidth || 300;
+    adsRequest.nonLinearAdSlotHeight = 150;
+    adsLoader.requestAds(adsRequest);
+  } catch (e) {
+    failAd('Reklam sistemi başlatılamadı.');
+  }
+}
+
+$('adStartBtn').onclick = startAdPlayback;
+$('adCancelBtn').onclick = () => {
+  cleanupAds();
+  $('adOverlay').classList.remove('active');
+  const fail = currentAdFail; currentAdDone = null; currentAdFail = null;
+  if (fail) fail();
+};
+
+// Devam etme onayı (multiplayer veya solo, coin ya da reklamla) — temizlenmiş
+// board/tray sunucudan geldiği gibi uygulanır; skor korunur, ekstra puan verilmez.
+function applyContinue(m) {
+  clearStuckUI();
+  coins = m.coins;
+  updateCoinBadge();
+  board = m.board;
+  tray = m.tray;
+  stuckActive = false;
+  myOver = false;
+  render();
+  renderTray();
+}
+
+function clearStuckUI() {
+  $('stuckOverlay').classList.remove('active');
+  $('soloOverlay').classList.remove('active');
+  $('adOverlay').classList.remove('active');
+  clearInterval(stuckTimerInterval);
+}
+
+function showOppBanner(text) {
+  const el = $('oppBanner');
+  el.textContent = text;
+  el.classList.add('show');
+  clearTimeout(oppBannerTimeout);
+  oppBannerTimeout = setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+function showMatchOver(m) {
+  clearStuckUI();
+  stopMoveCountdown();
+  myOver = true;
+  const ov = $('overlay'), title = $('overlayTitle'), info = $('overlayInfo');
+  const reasonText = {
+    giveup: m.result === 'lose' ? 'Pes ettin.' : 'Rakibin pes etti.',
+    timeout: m.result === 'lose' ? 'Karar süren doldu.' : 'Rakibinin karar süresi doldu.',
+    moveTimeout: m.result === 'lose' ? 'Hamle süren doldu.' : 'Rakibinin hamle süresi doldu.',
+    disconnect: m.result === 'win' ? 'Rakibin bağlantısı koptu.' : '',
+    leave: m.result === 'win' ? 'Rakibin oyundan ayrıldı.' : '',
+    simultaneous: m.result === 'win'
+      ? 'İkiniz de aynı anda hamlesiz kaldınız — skorun daha yüksekti!'
+      : 'İkiniz de aynı anda hamlesiz kaldınız — rakibinin skoru daha yüksekti.',
+  };
+  $('confetti').innerHTML = '';
+  if (m.result === 'win') {
+    title.textContent = '🏆 Kazandın!';
+    title.classList.toggle('victory-fx', !!equipped.victory);
+    if (equipped.victory) spawnConfetti();
+  } else {
+    title.classList.remove('victory-fx');
+    title.textContent = m.result === 'lose' ? '😞 Kaybettin' : '🤝 Berabere';
+  }
+  info.textContent = `${reasonText[m.reason] || ''} Puanın: ${score}`.trim();
+  ov.classList.add('active');
+}
+
+function spawnConfetti() {
+  const el = $('confetti');
+  const colors = ['#ffd700', '#ff6bd6', '#4dc3ff', '#5cd65c', '#ffa93b', '#7a6bff'];
+  for (let i = 0; i < 28; i++) {
+    const s = document.createElement('span');
+    s.style.left = Math.random() * 100 + '%';
+    s.style.background = colors[i % colors.length];
+    s.style.animationDelay = (Math.random() * 0.4) + 's';
+    s.style.animationDuration = (1.2 + Math.random() * 0.8) + 's';
+    el.appendChild(s);
+  }
+}
+
+// --- solo: sınırsız mod, hamlesiz kalınca reklam/coin ile devam veya bitir (sunucu tetikler) ---
+function showSoloStuck(m) {
+  stuckActive = true;
+  myOver = true;
+  stopMoveCountdown();
+  coins = m.coins;
+  updateCoinBadge();
+  $('soloTitle').textContent = 'OYUN BİTTİ!';
+  $('soloScore').textContent = score;
+  $('soloHigh').textContent = highScore;
+  $('soloBonusPreview').textContent = Math.round(score * SOLO_BONUS_MULTIPLIER);
+  $('soloAdBonusBtn').style.display = m.adBonusAvailable ? '' : 'none';
+  $('soloAdContinueBtn').style.display = m.adContinueAvailable ? '' : 'none';
+  $('soloCoinContinueBtn').textContent = `🪙 ${m.coinCost} Coin → Oyuna Devam Et`;
+  $('soloCoinContinueBtn').disabled = coins < m.coinCost;
+  $('soloError').textContent = '';
+  $('soloChoices').style.display = '';
+  $('soloResolved').style.display = 'none';
+  $('soloOverlay').classList.add('active');
+}
+
+function handleSoloDenied(m) {
+  const el = $('soloError');
+  if (m.reason === 'coins') {
+    if (typeof m.coins === 'number') { coins = m.coins; updateCoinBadge(); }
+    el.textContent = 'Yetersiz Blok Coin.';
+    $('soloCoinContinueBtn').disabled = true;
+  } else if (m.reason === 'adUsed') {
+    el.textContent = 'Reklamla devam etme hakkını zaten kullandın.';
+    $('soloAdContinueBtn').style.display = 'none';
+  } else if (m.reason === 'bonusAdUsed') {
+    el.textContent = 'Skor bonus reklamını zaten kullandın.';
+    $('soloAdBonusBtn').style.display = 'none';
+  } else {
+    el.textContent = 'İşlem tamamlanamadı.';
+  }
+}
+
+function applySoloBonus(m) {
+  score = m.score; // sunucu hesapladı (x1,5), istemci yalnızca gösterir
+  $('myScore').textContent = score;
+  finishSolo(true);
+}
+
+$('soloAdBonusBtn').onclick = () => ws.send(JSON.stringify({ t: 'soloWatchAdBonus' }));
+$('soloAdContinueBtn').onclick = () => ws.send(JSON.stringify({ t: 'soloWatchAdContinue' }));
+$('soloCoinContinueBtn').onclick = () => ws.send(JSON.stringify({ t: 'soloContinueCoin' }));
+$('soloEndBtn').onclick = () => finishSolo(false);
+$('soloAgainBtn').onclick = () => {
+  $('soloOverlay').classList.remove('active');
+  mode = 'solo';
+  ws.send(JSON.stringify({ t: 'soloStart' }));
+};
+$('soloMenuBtn').onclick = () => {
+  $('soloOverlay').classList.remove('active');
+  document.body.classList.remove('mode-solo');
+  show('menu');
+};
+
+let lastSoloBonusApplied = false;
+function finishSolo(bonusApplied) {
+  myOver = true;
+  lastSoloBonusApplied = bonusApplied;
+  // Skor gönderilmiyor — sunucu zaten kendi oyun motorundaki (gameLogic.js)
+  // otoriter skoru kullanıyor, istemciden gelen değere güvenmiyor.
+  ws.send(JSON.stringify({ t: 'soloEnd', bonusApplied }));
+}
+
+function showSoloFinal(m) {
+  stopMoveCountdown();
+  score = m.score; // sunucunun otoriter skoru (anti-cheat: istemcininkine güvenilmez)
+  highScore = m.highScore;
+  highScoreBonus = m.highScoreBonus;
+  updateMenuHighScore();
+  // Reklam bonuslu skor ayrı rekor havuzunda tutulur (adil sıralamayı bozmasın diye);
+  // "yeni rekor" karşılaştırması bu hamlenin ait olduğu havuza göre yapılır.
+  const relevantHigh = lastSoloBonusApplied ? highScoreBonus : highScore;
+  $('soloTitle').textContent = m.timedOut ? '⏱ Süre Doldu!' : 'Skor Kaydedildi';
+  $('soloScore').textContent = score;
+  $('soloHigh').textContent = highScore;
+  if (score >= relevantHigh && score > 0) {
+    $('soloResolvedMsg').textContent = lastSoloBonusApplied ? '🎉 Yeni bonuslu rekor!' : '🎉 Yeni rekor!';
+  } else {
+    $('soloResolvedMsg').textContent = `En iyi skorun: ${highScore}`;
+  }
+  $('soloChoices').style.display = 'none';
+  $('soloResolved').style.display = '';
+  $('soloError').textContent = '';
+  $('soloOverlay').classList.add('active');
+}
+
+// --- drag & drop ---
+const dragEl = $('dragEl');
+let drag = null;
+
+document.addEventListener('pointerdown', (e) => {
+  const tp = e.target.closest('.traypiece');
+  if (!tp || tp.classList.contains('used') || myOver) return;
+  const idx = +tp.dataset.idx;
+  const p = tray[idx];
+  drag = { idx, shape: p.shape, color: p.color };
+  const w = Math.max(...p.shape.map(c => c[1])) + 1;
+  const h = Math.max(...p.shape.map(c => c[0])) + 1;
+  drag.w = w; drag.h = h;
+  dragEl.innerHTML = '';
+  dragEl.style.gridTemplateColumns = `repeat(${w}, ${cellSize}px)`;
+  for (let r = 0; r < h; r++) for (let c = 0; c < w; c++) {
+    const d = document.createElement('div');
+    if (p.shape.some(s => s[0] === r && s[1] === c)) d.className = 'c' + p.color;
+    else d.style.visibility = 'hidden';
+    dragEl.appendChild(d);
+  }
+  moveDrag(e);
+  e.preventDefault();
+});
+
+function moveDrag(e) {
+  if (!drag) return;
+  const pw = drag.w * (cellSize + 3), ph = drag.h * (cellSize + 3);
+  const x = e.clientX - pw / 2, y = e.clientY - ph / 2 - 50;
+  dragEl.style.left = x + 'px';
+  dragEl.style.top = y + 'px';
+  const br = boardEl.getBoundingClientRect();
+  const r0 = Math.round((y - br.top - 6) / (cellSize + 3));
+  const c0 = Math.round((x - br.left - 6) / (cellSize + 3));
+  drag.r0 = r0; drag.c0 = c0;
+  cells.forEach(c => c.classList.remove('ghost-ok'));
+  if (canPlace(drag.shape, r0, c0)) {
+    drag.valid = true;
+    drag.shape.forEach(([r, c]) => cells[(r0 + r) * N + c0 + c].classList.add('ghost-ok'));
+  } else drag.valid = false;
+}
+
+document.addEventListener('pointermove', moveDrag);
+document.addEventListener('pointerup', () => {
+  if (!drag) return;
+  cells.forEach(c => c.classList.remove('ghost-ok'));
+  if (drag.valid) place(drag.idx, drag.r0, drag.c0);
+  dragEl.innerHTML = '';
+  drag = null;
+});
+</script>
+</body>
+</html>

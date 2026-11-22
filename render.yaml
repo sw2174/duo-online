@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: blockblast-online
+    runtime: node
+    plan: starter
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.20.2
+      - key: STRIPE_SECRET_KEY
+        sync: false

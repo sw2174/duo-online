@@ -1,0 +1,8 @@
+{
+  "appId": "com.blokyarisi.app",
+  "appName": "Blok Yarışı",
+  "webDir": "public",
+  "server": {
+    "androidScheme": "http"
+  }
+}
