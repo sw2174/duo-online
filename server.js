@@ -248,6 +248,7 @@ function sendFriendsList(ws) {
 
 const server = http.createServer((req, res) => {
   const cleanPath = req.url.split('?')[0];
+  if (cleanPath === '/healthz') { res.writeHead(200, { 'Content-Type': 'text/plain' }); return res.end('ok'); }
   // Stripe Checkout dönüşü gibi sorgu dizeli kök istekleri (/?checkout=success&...)
   // de index.html'e düşmeli — tek sayfalık uygulamada yol her zaman '/' ile başlar.
   const urlPath = cleanPath === '/' ? '/index.html' : cleanPath;
