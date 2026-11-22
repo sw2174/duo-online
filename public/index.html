@@ -310,6 +310,14 @@
   #moveTimerBadge.warn { color: #ffb347; border-color: rgba(255,179,71,0.5); }
   #moveTimerBadge.danger { color: #ff5c5c; border-color: rgba(255,92,92,0.6); animation: timerPulse 0.6s ease infinite; }
 
+  #exitGameBtn {
+    position: fixed; top: 10px; left: 10px; z-index: 25;
+    width: 36px; height: 36px; border-radius: 50%; padding: 0; line-height: 1;
+    background: rgba(255,255,255,0.12); color: #fff; font-size: 16px; font-weight: 800;
+    border: 1px solid rgba(255,255,255,0.18); display: flex; align-items: center; justify-content: center;
+  }
+  #exitGameBtn:active { transform: scale(0.92); }
+
   #coinBadge {
     position: fixed; top: 10px; right: 10px; z-index: 25;
     display: flex; align-items: center; gap: 6px;
@@ -485,6 +493,7 @@
 </div>
 
 <div id="game" class="screen">
+  <button id="exitGameBtn" title="Exit">✕</button>
   <div id="topbar">
     <div class="scorebox"><div class="name" id="myName">You</div><div class="pts" id="myScore">0</div></div>
     <div id="oppMini"></div>
@@ -918,6 +927,15 @@ $('againBtn').onclick = () => { $('overlay').classList.remove('active'); join();
 $('continueCoinBtn').onclick = () => ws.send(JSON.stringify({ t: 'continueCoin' }));
 $('continueAdBtn').onclick = () => ws.send(JSON.stringify({ t: 'watchAd' }));
 $('giveUpBtn').onclick = () => ws.send(JSON.stringify({ t: 'giveUp' }));
+$('exitGameBtn').onclick = () => {
+  if (mode === 'solo') {
+    if (!confirm('End this game and return to the menu?')) return;
+    ws.send(JSON.stringify({ t: 'soloEnd' }));
+  } else {
+    if (!confirm('Leaving now counts as a loss. Are you sure you want to exit?')) return;
+    ws.send(JSON.stringify({ t: 'quitMatch' }));
+  }
+};
 
 // --- Blok Coin rozeti + mağaza ---
 function updateCoinBadge() {
@@ -1544,6 +1562,7 @@ function showMatchOver(m) {
     simultaneous: m.result === 'win'
       ? 'You both got stuck at the same time — your score was higher!'
       : 'You both got stuck at the same time — your opponent had a higher score.',
+    quit: m.result === 'lose' ? 'You left the match.' : 'Your opponent left the match.',
   };
   $('confetti').innerHTML = '';
   if (m.result === 'win') {

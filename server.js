@@ -531,6 +531,13 @@ wss.on('connection', (ws) => {
       if (!match || match.ended || match.stuckPlayer !== ws) return;
       endMatch(match, 'giveup', ws.opp, ws);
 
+    } else if (msg.t === 'quitMatch') {
+      // Oyuncu aktif bir maçtayken (sıkışmadan, serbestçe) çıkış yapabilir —
+      // bu bir pes etme sayılır, rakip kazanır.
+      const match = ws.match;
+      if (!match || match.ended) return;
+      endMatch(match, 'quit', ws.opp, ws);
+
     } else if (msg.t === 'buyCoins') {
       // Stripe anahtarı yoksa test modu: tıklayınca anında coin eklenir, gerçek
       // ödeme alınmaz. Anahtar varsa gerçek akış 'createCheckout' üzerinden işler.
